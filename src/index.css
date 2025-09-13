@@ -90,41 +90,73 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Dark mode enterprise colors */
+    --background: 225 15% 8%;
+    --foreground: 0 0% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 225 15% 10%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 225 15% 10%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    /* Adjusted primary for dark mode */
+    --primary: 219 89% 45%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 219 89% 55%;
+    --primary-dark: 219 89% 35%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    /* Dark mode secondary */
+    --secondary: 225 15% 15%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    /* Dark mode muted */
+    --muted: 225 15% 15%;
+    --muted-foreground: 225 8% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    /* Keep accent bright in dark mode */
+    --accent: 35 91% 65%;
+    --accent-foreground: 225 15% 8%;
+    --accent-dark: 35 91% 55%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    /* Dark mode feature color */
+    --feature: 260 60% 55%;
+    --feature-foreground: 0 0% 100%;
+    --feature-light: 260 60% 65%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    /* Status colors for dark mode */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 71% 55%;
+    --success-foreground: 0 0% 100%;
+
+    /* UI Elements for dark mode */
+    --border: 225 15% 20%;
+    --input: 225 15% 20%;
+    --ring: 219 89% 45%;
+
+    /* Dark mode gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(219 89% 45%) 0%, hsl(260 60% 55%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(219 89% 25%) 0%, hsl(219 89% 35%) 50%, hsl(260 60% 45%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(225 15% 10%) 0%, hsl(225 15% 12%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(35 91% 65%) 0%, hsl(35 91% 55%) 100%);
+
+    /* Dark mode shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.2);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.3), 0 2px 4px -1px hsl(0 0% 0% / 0.2);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.3), 0 4px 6px -2px hsl(0 0% 0% / 0.2);
+    --shadow-xl: 0 20px 25px -5px hsl(0 0% 0% / 0.4), 0 10px 10px -5px hsl(0 0% 0% / 0.2);
+    --shadow-premium: 0 25px 50px -12px hsl(219 89% 35% / 0.4);
+
+    /* Sidebar colors for dark mode */
+    --sidebar-background: 225 15% 8%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 219 89% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 225 15% 15%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 225 15% 20%;
+    --sidebar-ring: 219 89% 45%;
   }
 }
 
