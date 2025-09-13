@@ -131,7 +131,7 @@ const AuthPage = () => {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="admin@vijayapps.com"
+                      placeholder="vijay_adina@vijayappsconsultants.com"
                       required
                     />
                   </div>
@@ -200,7 +200,7 @@ const AuthPage = () => {
             <div className="mt-6 p-4 bg-muted/50 rounded-lg">
               <h4 className="font-medium mb-2">Demo Access:</h4>
               <p className="text-sm text-muted-foreground">
-                Use email: <code className="bg-background px-1 rounded">admin@vijayapps.com</code><br/>
+                Use email: <code className="bg-background px-1 rounded">vijay_adina@vijayappsconsultants.com</code><br/>
                 Create an account first, then sign in to access the admin panel.
               </p>
             </div>

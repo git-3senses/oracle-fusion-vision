@@ -200,8 +200,8 @@ const Contact = () => {
                     <p className="text-muted-foreground text-sm mb-2">
                       Send us a message anytime
                     </p>
-                    <a href="mailto:info@vijayapps.com" className="text-primary hover:text-primary-dark font-medium">
-                      info@vijayapps.com
+                    <a href="mailto:vijay_adina@vijayappsconsultants.com" className="text-primary hover:text-primary-dark font-medium">
+                      vijay_adina@vijayappsconsultants.com
                     </a>
                   </div>
                 </div>
