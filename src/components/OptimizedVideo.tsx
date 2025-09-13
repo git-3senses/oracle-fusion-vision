@@ -75,10 +75,11 @@ const OptimizedVideo: React.FC<OptimizedVideoProps> = ({
   }, [onLoadEnd, handleVideoLoad]);
 
   const handleError = useCallback((e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
+    console.error('Video load error for:', src, e);
     setHasError(true);
     setIsLoading(false);
     onError?.(e);
-  }, [onError]);
+  }, [onError, src]);
 
   const togglePlayPause = useCallback(() => {
     if (!videoRef.current) return;
@@ -159,6 +160,7 @@ const OptimizedVideo: React.FC<OptimizedVideoProps> = ({
         loop={loop}
         playsInline
         controls={controls}
+        crossOrigin="anonymous"
         onLoadStart={handleLoadStart}
         onLoadedData={handleLoadedData}
         onPlay={handlePlay}
@@ -167,6 +169,8 @@ const OptimizedVideo: React.FC<OptimizedVideoProps> = ({
         style={{ display: isLoading ? 'none' : 'block' }}
       >
         <source src={src} type={getMimeTypeFromUrl(src)} />
+        <source src={src} type="video/mp4" />
+        <source src={src} type="video/webm" />
         {poster && (
           <img src={poster} alt={alt} className="w-full h-full object-cover" />
         )}

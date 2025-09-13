@@ -199,10 +199,10 @@ const HeroBanner: React.FC<HeroBannerProps> = ({
             muted={true}
             loop={true}
             controls={false}
-            lazyLoad={true}
-            onLoadStart={() => console.log('Video loading started')}
-            onLoadEnd={() => console.log('Video loaded')}
-            onError={(error) => console.error('Video error:', error)}
+            lazyLoad={false}
+            onLoadStart={() => console.log('Hero video loading started for:', mediaUrl)}
+            onLoadEnd={() => console.log('Hero video loaded for:', mediaUrl)}
+            onError={(error) => console.error('Hero video error:', error, 'URL:', mediaUrl)}
           />
         ) : (
           <img 
