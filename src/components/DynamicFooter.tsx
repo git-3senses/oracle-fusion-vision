@@ -272,7 +272,7 @@ const DynamicFooter = () => {
             
             {/* Contact Info */}
             {footerContent.contact_info && (
-              <div className="lg:col-span-2">
+              <div>
                 {renderSection('contact_info', footerContent.contact_info)}
                 
                 {/* Social Links */}
@@ -296,17 +296,6 @@ const DynamicFooter = () => {
         {footerContent.legal && renderSection('legal', footerContent.legal)}
       </div>
 
-      {/* Floating CTA Button */}
-      <div className="fixed bottom-6 right-6 z-40">
-        <Button 
-          variant="accent" 
-          size="lg"
-          onClick={() => scrollToSection('#contact')}
-          className="shadow-premium hover-lift rounded-full"
-        >
-          Book Free Consultation
-        </Button>
-      </div>
     </footer>
   );
 };
