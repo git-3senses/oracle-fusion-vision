@@ -4,8 +4,7 @@ import {
   Phone, 
   MapPin, 
   Linkedin, 
-  Twitter, 
-  Youtube,
+  Facebook,
   Globe,
   ArrowUp
 } from 'lucide-react';
@@ -97,8 +96,7 @@ const DynamicFooter = () => {
       case 'phone': return <Phone className="h-5 w-5 text-accent" />;
       case 'map-pin': return <MapPin className="h-5 w-5 text-accent" />;
       case 'linkedin': return <Linkedin className="h-5 w-5" />;
-      case 'twitter': return <Twitter className="h-5 w-5" />;
-      case 'youtube': return <Youtube className="h-5 w-5" />;
+      case 'facebook': return <Facebook className="h-5 w-5" />;
       case 'globe': return <Globe className="h-5 w-5 text-accent" />;
       default: return null;
     }
@@ -149,15 +147,18 @@ const DynamicFooter = () => {
       case 'social_links':
         return (
           <div className="flex items-center space-x-4">
-            {items.map((item) => (
-              <a 
-                key={item.id}
-                href={item.link_url || '#'} 
-                className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-accent transition-colors"
-              >
-                {getIconComponent(item.icon_name)}
-              </a>
-            ))}
+            <a 
+              href="https://linkedin.com" 
+              className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-accent transition-colors"
+            >
+              <Linkedin className="h-5 w-5" />
+            </a>
+            <a 
+              href="https://facebook.com" 
+              className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-accent transition-colors"
+            >
+              <Facebook className="h-5 w-5" />
+            </a>
           </div>
         );
 
