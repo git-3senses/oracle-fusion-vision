@@ -174,7 +174,7 @@ const Footer = () => {
           variant="accent" 
           size="lg"
           onClick={() => scrollToSection('contact')}
-          className="shadow-premium hover-lift rounded-full animate-pulse"
+          className="shadow-premium hover-lift rounded-full"
         >
           Book Free Consultation
         </Button>

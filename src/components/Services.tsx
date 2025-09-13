@@ -15,7 +15,7 @@ import {
   Workflow,
   Cloud
 } from 'lucide-react';
-import oracleImage from '@/assets/oracle-dashboard.jpg';
+import oracleImage from '@/assets/oracle-modern.jpg';
 
 const Services = () => {
   const scrollToSection = (sectionId: string) => {

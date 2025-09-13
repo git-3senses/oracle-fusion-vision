@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Play, Shield, Award, Users, Globe } from 'lucide-react';
-import heroImage from '@/assets/hero-consulting.jpg';
+import heroImage from '@/assets/hero-modern.jpg';
 
 const Hero = () => {
   const scrollToSection = (sectionId: string) => {
@@ -125,7 +125,7 @@ const Hero = () => {
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
         <div className="w-1 h-8 bg-white/30 rounded-full" />
       </div>
     </section>

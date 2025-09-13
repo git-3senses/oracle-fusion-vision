@@ -12,7 +12,7 @@ import {
   Cog,
   Play
 } from 'lucide-react';
-import teamImage from '@/assets/team-collaboration.jpg';
+import teamImage from '@/assets/team-modern.jpg';
 
 const About = () => {
   const [counters, setCounters] = useState({
