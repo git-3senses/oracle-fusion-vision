@@ -552,11 +552,21 @@ const ContentManager: React.FC = () => {
                   {pageImages.map((image) => (
                     <div key={image.id} className="border rounded-lg overflow-hidden">
                       <div className="aspect-video relative">
-                        <img
-                          src={image.image_url}
-                          alt={image.image_alt || ''}
-                          className="w-full h-full object-cover"
-                        />
+                        {image.image_url.includes('.mp4') || image.image_url.includes('.webm') || image.image_url.includes('.mov') ? (
+                          <video
+                            src={image.image_url}
+                            className="w-full h-full object-cover"
+                            controls
+                            muted
+                            playsInline
+                          />
+                        ) : (
+                          <img
+                            src={image.image_url}
+                            alt={image.image_alt || ''}
+                            className="w-full h-full object-cover"
+                          />
+                        )}
                         <div className="absolute top-2 right-2">
                           <Badge variant={image.is_active ? 'default' : 'secondary'}>
                             {image.image_type}

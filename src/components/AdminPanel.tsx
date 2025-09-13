@@ -426,17 +426,7 @@ const AdminPanel = () => {
           </TabsContent>
 
           <TabsContent value="footer">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Globe className="h-5 w-5 mr-2" />
-                  Footer Content Management
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <FooterManager />
-              </CardContent>
-            </Card>
+            <FooterManager />
           </TabsContent>
         </Tabs>
       </div>
