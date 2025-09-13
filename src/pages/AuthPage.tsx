@@ -22,7 +22,7 @@ const AuthPage = () => {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        navigate('/admin');
+        navigate('/vac_admin');
       }
     };
     checkUser();
@@ -47,7 +47,7 @@ const AuthPage = () => {
         description: "Redirecting to admin panel...",
       });
 
-      navigate('/admin');
+      navigate('/vac_admin');
     } catch (error: any) {
       toast({
         title: "Login Failed",
@@ -64,7 +64,7 @@ const AuthPage = () => {
     setIsLoading(true);
 
     try {
-      const redirectUrl = `${window.location.origin}/admin`;
+      const redirectUrl = `${window.location.origin}/vac_admin`;
       
       const { error } = await supabase.auth.signUp({
         email,
