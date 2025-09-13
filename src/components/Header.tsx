@@ -1,37 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Upload } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { Menu, X } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
-  const { toast } = useToast();
+  const [siteSettings, setSiteSettings] = useState<Record<string, string>>({});
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
-        toast({
-          title: "File too large",
-          description: "Please select an image under 5MB",
-          variant: "destructive"
-        });
-        return;
-      }
-      
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setLogoUrl(e.target?.result as string);
-        toast({
-          title: "Logo uploaded",
-          description: "Your logo has been updated successfully",
-        });
-      };
-      reader.readAsDataURL(file);
+  useEffect(() => {
+    fetchSiteSettings();
+  }, []);
+
+  const fetchSiteSettings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('setting_key, setting_value');
+
+      if (error) throw error;
+
+      const settingsMap = (data || []).reduce((acc, setting) => {
+        acc[setting.setting_key] = setting.setting_value || '';
+        return acc;
+      }, {} as Record<string, string>);
+
+      setSiteSettings(settingsMap);
+    } catch (error) {
+      console.error('Error fetching site settings:', error);
+      // Fallback to default values
+      setSiteSettings({
+        company_name: 'Vijay Apps Consultants',
+        company_tagline: 'Oracle E-Business Suite & Fusion Specialists',
+        cta_button_text: 'Get Free Consultation'
+      });
     }
   };
 
@@ -49,11 +53,11 @@ const Header = () => {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo Section */}
           <div className="flex items-center space-x-4">
-            <div className="relative group">
-              {logoUrl ? (
+            <div className="relative">
+              {siteSettings.logo_url ? (
                 <img 
-                  src={logoUrl} 
-                  alt="Vijay Apps Consultants Logo" 
+                  src={siteSettings.logo_url} 
+                  alt={`${siteSettings.company_name} Logo`} 
                   className="h-10 w-auto lg:h-12"
                 />
               ) : (
@@ -61,25 +65,14 @@ const Header = () => {
                   <span className="text-white font-bold text-sm lg:text-base">VAC</span>
                 </div>
               )}
-              
-              {/* Logo Upload Overlay */}
-              <label className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer rounded-lg flex items-center justify-center">
-                <Upload className="h-4 w-4 text-white" />
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  onChange={handleLogoUpload}
-                  className="hidden"
-                />
-              </label>
             </div>
             
             <div className="flex flex-col">
               <h1 className="text-lg lg:text-xl font-bold text-foreground">
-                Vijay Apps Consultants
+                {siteSettings.company_name || 'Vijay Apps Consultants'}
               </h1>
               <p className="text-xs text-muted-foreground hidden lg:block">
-                Oracle E-Business Suite & Fusion Specialists
+                {siteSettings.company_tagline || 'Oracle E-Business Suite & Fusion Specialists'}
               </p>
             </div>
           </div>
@@ -109,7 +102,7 @@ const Header = () => {
               className="hover-lift"
               onClick={() => navigate('/contact')}
             >
-              Get Free Consultation
+              {siteSettings.cta_button_text || 'Get Free Consultation'}
             </Button>
           </div>
 
@@ -151,7 +144,7 @@ const Header = () => {
                   setIsMenuOpen(false);
                 }}
               >
-                Get Free Consultation
+                {siteSettings.cta_button_text || 'Get Free Consultation'}
               </Button>
             </nav>
           </div>

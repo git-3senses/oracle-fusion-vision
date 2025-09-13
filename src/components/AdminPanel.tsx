@@ -30,6 +30,7 @@ import {
 import HeroBannerAdmin from './HeroBannerAdmin';
 import ContentManager from './ContentManager';
 import FooterManager from './FooterManager';
+import SiteSettingsManager from './SiteSettingsManager';
 
 interface ContactSubmission {
   id: string;
@@ -221,7 +222,7 @@ const AdminPanel = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="submissions" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="submissions" className="flex items-center">
               <Mail className="h-4 w-4 mr-2" />
               Contacts
@@ -237,6 +238,10 @@ const AdminPanel = () => {
             <TabsTrigger value="footer" className="flex items-center">
               <Globe className="h-4 w-4 mr-2" />
               Footer
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="flex items-center">
+              <Settings className="h-4 w-4 mr-2" />
+              Site Settings
             </TabsTrigger>
           </TabsList>
 
@@ -388,6 +393,20 @@ const AdminPanel = () => {
               </CardHeader>
               <CardContent>
                 <HeroBannerAdmin />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="settings">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Settings className="h-5 w-5 mr-2" />
+                  Site Settings & Logo Management
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <SiteSettingsManager />
               </CardContent>
             </Card>
           </TabsContent>
