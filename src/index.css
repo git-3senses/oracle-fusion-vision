@@ -7,6 +7,9 @@ All colors MUST be HSL.
 */
 
 @layer base {
+  html, body {
+    overflow-x: clip; /* prevent incidental horizontal scrolling on mobile */
+  }
   :root {
     /* Modern Dark Theme - Light Mode Base */
     --background: 0 0% 98%;
@@ -46,6 +49,7 @@ All colors MUST be HSL.
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --success: 142 71% 45%;
+    --success-light: 142 71% 55%;
     --success-foreground: 0 0% 100%;
 
     /* UI Elements */
@@ -129,6 +133,7 @@ All colors MUST be HSL.
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --success: 142 71% 55%;
+    --success-light: 142 71% 65%;
     --success-foreground: 0 0% 100%;
 
     /* UI Elements for dark mode */
@@ -188,7 +193,7 @@ All colors MUST be HSL.
   }
 
   .text-hero {
-    @apply text-5xl lg:text-7xl font-bold tracking-tight leading-none;
+    @apply text-3xl sm:text-4xl lg:text-7xl font-bold tracking-tight leading-none;
   }
 
   .text-subtitle {
@@ -215,13 +220,14 @@ All colors MUST be HSL.
     animation: gradientShift 8s ease infinite;
   }
 
-  /* Hover Effects */
+  /* Enhanced Hover Effects */
   .hover-lift {
     @apply transition-all duration-300 ease-out;
   }
 
   .hover-lift:hover {
     @apply transform -translate-y-2 shadow-xl;
+    transform: translateY(-4px) scale(1.02);
   }
 
   .hover-glow {
@@ -230,6 +236,22 @@ All colors MUST be HSL.
 
   .hover-glow:hover {
     box-shadow: 0 0 30px hsl(var(--primary) / 0.3);
+  }
+
+  .hover-scale {
+    @apply transition-all duration-200 ease-out;
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.05);
+  }
+
+  .hover-bounce {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .hover-bounce:hover {
+    animation: bounceGentle 0.6s ease-out;
   }
 
   /* Premium Cards */
@@ -269,17 +291,97 @@ All colors MUST be HSL.
     background: var(--gradient-accent);
   }
 
+  /* Additional gradients to support feature/success cards */
+  .bg-gradient-feature {
+    background: linear-gradient(135deg, hsl(var(--feature)) 0%, hsl(var(--feature-light)) 100%);
+  }
+
+  .bg-gradient-success {
+    background: linear-gradient(135deg, hsl(var(--success)) 0%, hsl(var(--success-light)) 100%);
+  }
+
   /* Text Gradients */
-  .text-gradient-primary {
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  /* New: text-button-gradient matches primary button gradient; safe fallback */
+  .text-button-gradient { color: #048BD4; }
+  .dark .text-button-gradient { color: #3AA0E1; }
+  @supports ((-webkit-background-clip:text) or (background-clip:text)) {
+    .text-button-gradient {
+      background: var(--gradient-logo) !important; /* #6547C7 -> #048BD4 */
+      -webkit-background-clip: text !important;
+      background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      color: transparent !important;
+      display: inline-block;
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+    }
+  }
+
+  /* Muted text gradient for dark mode headings */
+  .text-gradient-muted { color: inherit; }
+  .dark .text-gradient-muted { color: hsl(0 0% 85%); }
+  @supports ((-webkit-background-clip:text) or (background-clip:text)) {
+    .text-gradient-muted {
+      background: linear-gradient(135deg, hsl(0 0% 78%) 0%, hsl(0 0% 92%) 100%);
+      -webkit-background-clip: text !important;
+      background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      color: transparent !important;
+      display: inline-block;
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+    }
   }
 
   /* Premium Shadows */
   .shadow-premium {
     box-shadow: var(--shadow-premium);
+  }
+
+  /* Mobile-optimized utilities */
+  .mobile-padding {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  .mobile-spacing {
+    @apply py-8 sm:py-12 lg:py-16;
+  }
+
+  .touch-target-min {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  .mobile-text-hierarchy {
+    @apply text-3xl sm:text-4xl lg:text-6xl;
+  }
+
+  /* Enhanced focus styles for accessibility */
+  .focus-visible-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+  }
+
+  /* Skip link styles */
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+
+  .focus\:not-sr-only:focus {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    padding: inherit !important;
+    margin: inherit !important;
+    overflow: visible !important;
+    clip: auto !important;
+    white-space: normal !important;
   }
 }
 
@@ -321,4 +423,16 @@ All colors MUST be HSL.
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
+}
+
+@keyframes bounceGentle {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-4px);
+  }
+  60% {
+    transform: translateY(-2px);
+  }
 }

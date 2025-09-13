@@ -19,6 +19,17 @@ import {
   ArrowUp,
   ArrowDown
 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import VideoUploadOptimizer from './VideoUploadOptimizer';
@@ -116,10 +127,11 @@ const ContentManager: React.FC = () => {
       setIsSaving(true);
       
       if (content.id) {
-        // Update existing content
+        // Update existing content (omit id from payload)
+        const { id, ...updateFields } = content as any;
         const { error } = await supabase
           .from('page_content')
-          .update(content)
+          .update(updateFields)
           .eq('id', content.id);
         
         if (error) throw error;
@@ -195,13 +207,13 @@ const ContentManager: React.FC = () => {
       const fileName = `${selectedPage}-${Date.now()}.${fileExt}`;
       
       const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('hero-media')
+        .from('page-media')
         .upload(fileName, file);
 
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage
-        .from('hero-media')
+        .from('page-media')
         .getPublicUrl(fileName);
 
       // Save image data to database
@@ -233,6 +245,30 @@ const ContentManager: React.FC = () => {
         description: 'Failed to upload image',
         variant: 'destructive'
       });
+    }
+  };
+
+  const getStoragePathFromPublicUrl = (publicUrl: string, bucket: string) => {
+    const marker = `/object/public/${bucket}/`;
+    const idx = publicUrl.indexOf(marker);
+    return idx !== -1 ? publicUrl.substring(idx + marker.length) : publicUrl;
+  };
+
+  const deletePageImage = async (image: PageImageData) => {
+    try {
+      // Remove storage object best-effort
+      if (image.image_url) {
+        const path = getStoragePathFromPublicUrl(image.image_url, 'page-media');
+        await supabase.storage.from('page-media').remove([path]);
+      }
+    } catch (e) {
+      console.warn('Failed to remove storage object for image:', image.id, e);
+    } finally {
+      await supabase
+        .from('page_images')
+        .delete()
+        .eq('id', image.id);
+      fetchPageImages();
     }
   };
 
@@ -388,14 +424,29 @@ const ContentManager: React.FC = () => {
                         >
                           Edit
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => deleteContent(content.id)}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-destructive hover:text-destructive"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete this section?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => deleteContent(content.id)}>Delete</AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </div>
                   ))}
@@ -581,20 +632,29 @@ const ContentManager: React.FC = () => {
                           </p>
                         )}
                         <div className="flex justify-end mt-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              supabase
-                                .from('page_images')
-                                .delete()
-                                .eq('id', image.id)
-                                .then(() => fetchPageImages());
-                            }}
-                            className="text-destructive hover:text-destructive"
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-destructive hover:text-destructive"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete this image?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This will permanently remove the image and its storage object.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => deletePageImage(image)}>Delete</AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       </div>
                     </div>

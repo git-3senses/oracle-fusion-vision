@@ -21,11 +21,11 @@ const buttonVariants = cva(
         premium: "bg-gradient-hero text-white hover:shadow-premium hover:-translate-y-1 font-semibold border border-primary/20",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-12 rounded-lg px-8 text-base",
-        xl: "h-14 rounded-xl px-10 text-lg",
-        icon: "h-10 w-10",
+        default: "h-11 px-4 py-2 min-w-[44px]",
+        sm: "h-10 rounded-md px-3 min-w-[40px]",
+        lg: "h-12 rounded-lg px-8 text-base min-w-[44px]",
+        xl: "h-14 rounded-xl px-10 text-lg min-w-[44px]",
+        icon: "h-11 w-11 min-w-[44px]",
       },
     },
     defaultVariants: {

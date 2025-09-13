@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   Mail, 
   Phone, 
@@ -10,6 +11,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
+import { loadSiteSettings, onSiteSettingsUpdated } from '@/utils/settingsCache';
 
 interface FooterContentData {
   id: string;
@@ -27,10 +29,14 @@ const DynamicFooter = () => {
   const [footerContent, setFooterContent] = useState<Record<string, FooterContentData[]>>({});
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     fetchFooterContent();
     fetchLogoUrl();
+    const off = onSiteSettingsUpdated(fetchLogoUrl);
+    return () => off();
   }, []);
 
   const fetchFooterContent = async () => {
@@ -52,7 +58,19 @@ const DynamicFooter = () => {
         return acc;
       }, {} as Record<string, FooterContentData[]>);
 
-      setFooterContent(grouped);
+      // Add default Quick Links when none are configured
+      const withDefaults = { ...grouped } as Record<string, FooterContentData[]>;
+      if (!withDefaults.quick_links || withDefaults.quick_links.length === 0) {
+        withDefaults.quick_links = [
+          { id: 'ql-home', section_type: 'quick_links', title: 'Home', content: null, link_url: '/', link_text: null, icon_name: null, order_index: 0, is_active: true },
+          { id: 'ql-about', section_type: 'quick_links', title: 'About Us', content: null, link_url: '/about', link_text: null, icon_name: null, order_index: 1, is_active: true },
+          { id: 'ql-services', section_type: 'quick_links', title: 'Services', content: null, link_url: '/services', link_text: null, icon_name: null, order_index: 2, is_active: true },
+          { id: 'ql-careers', section_type: 'quick_links', title: 'Careers', content: null, link_url: '/careers', link_text: null, icon_name: null, order_index: 3, is_active: true },
+          { id: 'ql-contact', section_type: 'quick_links', title: 'Contact', content: null, link_url: '/contact', link_text: null, icon_name: null, order_index: 4, is_active: true },
+        ];
+      }
+
+      setFooterContent(withDefaults);
     } catch (error) {
       console.error('Error fetching footer content:', error);
       setFooterContent({});
@@ -73,7 +91,8 @@ const DynamicFooter = () => {
         setLogoUrl(data.setting_value);
       }
     } catch (error) {
-      console.error('Error fetching logo:', error);
+      const cached = loadSiteSettings();
+      if (cached?.logo_url) setLogoUrl(cached.logo_url);
     }
   };
 
@@ -81,12 +100,41 @@ const DynamicFooter = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const scrollToSection = (sectionId: string) => {
-    if (sectionId.startsWith('#')) {
-      const element = document.getElementById(sectionId.substring(1));
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+  const handleLinkNavigation = (rawUrl: string | null) => {
+    if (!rawUrl) return;
+    const url = rawUrl.trim();
+
+    // External links
+    if (/^https?:\/\//i.test(url)) {
+      window.open(url, '_blank');
+      return;
+    }
+
+    // Hash or plain section id
+    if (url.startsWith('#') || !url.startsWith('/')) {
+      const id = url.startsWith('#') ? url.substring(1) : url;
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+        return;
       }
+      // Navigate to home with hash and attempt scroll after render
+      const target = `/#${id}`;
+      if (location.pathname !== '/') {
+        navigate(target);
+        setTimeout(() => {
+          const elAfter = document.getElementById(id);
+          if (elAfter) elAfter.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+        return;
+      }
+      window.location.hash = `#${id}`;
+      return;
+    }
+
+    // Internal route path
+    if (url.startsWith('/')) {
+      navigate(url);
     }
   };
 
@@ -172,7 +220,7 @@ const DynamicFooter = () => {
               {items.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => item.link_url && scrollToSection(item.link_url)}
+                  onClick={() => handleLinkNavigation(item.link_url || (item.title ? `#${(item.title || '').toLowerCase().replace(/\s+/g, '-')}` : null))}
                   className="block text-white/80 hover:text-white transition-colors text-left"
                 >
                   {item.title || item.content}
@@ -206,15 +254,24 @@ const DynamicFooter = () => {
               </div>
 
               <div className="flex items-center space-x-6">
-                {otherLegalItems.map((item) => (
-                  <a 
-                    key={item.id}
-                    href={item.link_url || '#'} 
-                    className="text-white/60 hover:text-white text-sm transition-colors"
-                  >
-                    {item.title || item.content}
-                  </a>
-                ))}
+                {otherLegalItems.map((item) => {
+                  const title = item.title || item.content || '';
+                  let href = item.link_url || '#';
+                  if (!item.link_url && title) {
+                    const t = title.toLowerCase();
+                    if (t.includes('privacy')) href = '/privacy';
+                    if (t.includes('terms')) href = '/terms';
+                  }
+                  return (
+                    <a 
+                      key={item.id}
+                      href={href}
+                      className="text-white/60 hover:text-white text-sm transition-colors"
+                    >
+                      {title}
+                    </a>
+                  );
+                })}
                 <Button 
                   variant="ghost" 
                   size="sm"
@@ -245,9 +302,9 @@ const DynamicFooter = () => {
   }
 
   return (
-    <footer className="bg-primary-dark text-white relative overflow-hidden">
+    <footer className="bg-primary-dark dark:bg-black text-white relative overflow-hidden">
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
+      <div className="absolute inset-0 opacity-5 overflow-hidden">
         <div className="absolute inset-0" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
         }} />

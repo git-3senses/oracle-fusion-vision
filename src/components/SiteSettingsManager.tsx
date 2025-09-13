@@ -21,6 +21,7 @@ import {
   Trash2
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { saveSiteSettings } from '@/utils/settingsCache';
 import { useToast } from '@/hooks/use-toast';
 import VideoUploadOptimizer from './VideoUploadOptimizer';
 
@@ -36,6 +37,7 @@ const SiteSettingsManager: React.FC = () => {
   const [settings, setSettings] = useState<Record<string, SiteSettingData>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [failedKeys, setFailedKeys] = useState<Set<string>>(new Set());
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
 
@@ -59,6 +61,12 @@ const SiteSettingsManager: React.FC = () => {
       }, {} as Record<string, SiteSettingData>);
 
       setSettings(settingsMap);
+      // Cache for public pages fallback and instant reflection
+      const compact: Record<string, string> = {};
+      Object.values(settingsMap).forEach((row) => {
+        if (row.setting_value != null) compact[row.setting_key] = row.setting_value;
+      });
+      saveSiteSettings(compact);
     } catch (error) {
       console.error('Error fetching settings:', error);
       toast({
@@ -72,37 +80,42 @@ const SiteSettingsManager: React.FC = () => {
   };
 
   const updateSetting = async (key: string, value: string | null) => {
+    // Optimistic local update so controls feel responsive
+    const prev = settings[key];
+    const exists = !!prev;
+    const nextRow = exists
+      ? { ...prev, setting_value: value }
+      : { id: key as any, setting_key: key, setting_value: value, setting_type: 'text' as const, description: key.replace(/_/g, ' ') } as any;
+    setSettings(prevMap => ({ ...prevMap, [key]: nextRow }));
+
     try {
-      const exists = !!settings[key];
-      if (exists) {
-        const { error } = await supabase
-          .from('site_settings')
-          .update({ setting_value: value })
-          .eq('setting_key', key);
-        if (error) throw error;
-        setSettings(prev => ({
-          ...prev,
-          [key]: { ...prev[key], setting_value: value }
-        }));
-      } else {
-        const insertRow = {
+      const { error } = await supabase
+        .from('site_settings')
+        .upsert({
           setting_key: key,
           setting_value: value,
-          setting_type: 'text' as const,
-          description: key.replace(/_/g, ' ')
-        };
-        const { error } = await supabase
-          .from('site_settings')
-          .insert(insertRow);
-        if (error) throw error;
-        setSettings(prev => ({
-          ...prev,
-          [key]: { id: key as any, ...insertRow } as any
-        }));
-      }
+          setting_type: 'text',
+          description: key.replace(/_/g, ' '),
+        }, { onConflict: 'setting_key' });
+      if (error) throw error;
+      // Update cache and broadcast change
+      const compact: Record<string, string> = {};
+      Object.entries(settings).forEach(([k, v]) => {
+        if (v?.setting_value != null) compact[k] = v.setting_value as string;
+      });
+      if (value != null) compact[key] = value;
+      saveSiteSettings(compact);
+      setFailedKeys(prev => {
+        const n = new Set(prev);
+        n.delete(key);
+        return n;
+      });
     } catch (error) {
       console.error('Error updating setting:', error);
-      throw error;
+      // Revert optimistic change and notify admin that server write failed
+      setSettings(prevMap => ({ ...prevMap, ...(prev ? { [key]: prev } : (() => { const { [key]: _, ...rest } = prevMap; return rest; })()) } as any));
+      setFailedKeys(prev => new Set(prev).add(key));
+      toast({ title: 'Error', description: 'Failed to update setting on server. Please check Supabase policies.', variant: 'destructive' });
     }
   };
 
@@ -346,7 +359,7 @@ const SiteSettingsManager: React.FC = () => {
   return (
     <div className="space-y-6">
       <Tabs defaultValue="company" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="company" className="flex items-center space-x-2">
             <Building className="h-4 w-4" />
             <span>Company</span>
@@ -370,6 +383,10 @@ const SiteSettingsManager: React.FC = () => {
           <TabsTrigger value="seo" className="flex items-center space-x-2">
             <Palette className="h-4 w-4" />
             <span>SEO</span>
+          </TabsTrigger>
+          <TabsTrigger value="appearance" className="flex items-center space-x-2">
+            <Palette className="h-4 w-4" />
+            <span>Appearance</span>
           </TabsTrigger>
         </TabsList>
 
@@ -561,6 +578,86 @@ const SiteSettingsManager: React.FC = () => {
                   </div>
                 );
               })}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="appearance">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Palette className="h-5 w-5 mr-2" />
+                Theme & Hero Defaults
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium">Default Theme</Label>
+                  <div className="mt-2">
+                    <select
+                      className="px-3 py-2 border rounded w-full"
+                      value={settings['default_theme']?.setting_value || 'light'}
+                      onChange={(e) => updateSetting('default_theme', e.target.value)}
+                    >
+                      <option value="light">Light</option>
+                      <option value="dark">Dark</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 mt-6 md:mt-0">
+                  <Switch
+                    checked={(settings['theme_follow_system']?.setting_value || 'false') === 'true'}
+                    onCheckedChange={(checked) => updateSetting('theme_follow_system', checked ? 'true' : 'false')}
+                  />
+                  <Label>Follow system theme if user has no preference</Label>
+                  {failedKeys.has('theme_follow_system') && (
+                    <Button variant="outline" size="sm" onClick={() => updateSetting('theme_follow_system', settings['theme_follow_system']?.setting_value || 'false')}>Retry</Button>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium">Default Hero Overlay Opacity</Label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.05"
+                    value={parseFloat(settings['hero_default_overlay_opacity']?.setting_value || '0.7')}
+                    onChange={(e) => updateSetting('hero_default_overlay_opacity', e.target.value)}
+                    className="w-full mt-2"
+                  />
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {(parseFloat(settings['hero_default_overlay_opacity']?.setting_value || '0.7') * 100).toFixed(0)}%
+                  </div>
+                  {failedKeys.has('hero_default_overlay_opacity') && (
+                    <Button variant="outline" size="sm" onClick={() => updateSetting('hero_default_overlay_opacity', settings['hero_default_overlay_opacity']?.setting_value || '0.7')}>Retry</Button>
+                  )}
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Default Hero Text Color</Label>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Input
+                      type="color"
+                      value={settings['hero_default_text_color']?.setting_value || '#ffffff'}
+                      onChange={(e) => updateSetting('hero_default_text_color', e.target.value)}
+                      className="w-20 h-10"
+                    />
+                    <Input
+                      value={settings['hero_default_text_color']?.setting_value || '#ffffff'}
+                      onChange={(e) => updateSetting('hero_default_text_color', e.target.value)}
+                    />
+                  </div>
+                  {failedKeys.has('hero_default_text_color') && (
+                    <Button variant="outline" size="sm" onClick={() => updateSetting('hero_default_text_color', settings['hero_default_text_color']?.setting_value || '#ffffff')}>Retry</Button>
+                  )}
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Pages can override these defaults in Hero Banner settings. Defaults are used when page-specific values are not set.
+              </p>
             </CardContent>
           </Card>
         </TabsContent>

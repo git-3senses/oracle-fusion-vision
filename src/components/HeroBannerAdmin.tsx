@@ -12,6 +12,8 @@ import { Save, Upload, Eye, EyeOff, Palette, HardDrive } from 'lucide-react';
 import VideoUploadOptimizer from './VideoUploadOptimizer';
 import MediaStorageManager from './MediaStorageManager';
 import OptimizedVideo from './OptimizedVideo';
+import { Input as TextInput } from '@/components/ui/input';
+import { saveBanner } from '@/utils/bannerCache';
 
 interface HeroBannerData {
   id: string;
@@ -34,11 +36,36 @@ const HeroBannerAdmin: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [previewMode, setPreviewMode] = useState(false);
+  const [pageTheme, setPageTheme] = useState<'inherit' | 'light' | 'dark'>('inherit');
   const { toast } = useToast();
 
   useEffect(() => {
     fetchBanners();
   }, []);
+
+  // Load current page theme override when selection changes
+  useEffect(() => {
+    (async () => {
+      if (!selectedBanner) return;
+      try {
+        const key = `page_theme_${selectedBanner.page_name}`;
+        const { data, error } = await supabase
+          .from('site_settings')
+          .select('setting_value')
+          .eq('setting_key', key)
+          .maybeSingle();
+        if (error) {
+          setPageTheme('inherit');
+          return;
+        }
+        const val = (data?.setting_value || '').toLowerCase();
+        if (val === 'light' || val === 'dark') setPageTheme(val as any);
+        else setPageTheme('inherit');
+      } catch {
+        setPageTheme('inherit');
+      }
+    })();
+  }, [selectedBanner?.id]);
 
   const fetchBanners = async () => {
     try {
@@ -90,6 +117,43 @@ const HeroBannerAdmin: React.FC = () => {
         description: "Hero banner updated successfully",
       });
 
+      // Persist page theme override in site_settings
+      try {
+        const key = `page_theme_${selectedBanner.page_name}`;
+        if (pageTheme === 'inherit') {
+          await supabase.from('site_settings').delete().eq('setting_key', key);
+        } else {
+          const { error: upErr } = await supabase
+            .from('site_settings')
+            .upsert({ setting_key: key, setting_value: pageTheme, setting_type: 'text', description: `Theme override for ${selectedBanner.page_name}` }, { onConflict: 'setting_key' });
+          if (upErr) throw upErr;
+        }
+        // Update cache & broadcast to live pages
+        try {
+          const cachedRaw = localStorage.getItem('site_settings_cache');
+          const cached = cachedRaw ? JSON.parse(cachedRaw) : {};
+          if (pageTheme === 'inherit') delete cached[key]; else cached[key] = pageTheme;
+          localStorage.setItem('site_settings_cache', JSON.stringify(cached));
+          localStorage.setItem('site_settings_updated_at', String(Date.now()));
+        } catch {}
+      } catch (e) {
+        console.log('Page theme save optional error:', e);
+      }
+
+      // Update local banner cache for immediate reflection
+      try {
+        saveBanner(selectedBanner.page_name, {
+          title: selectedBanner.title,
+          subtitle: selectedBanner.subtitle,
+          media_type: selectedBanner.media_type,
+          media_url: selectedBanner.media_url,
+          overlay_opacity: selectedBanner.overlay_opacity,
+          text_color: selectedBanner.text_color,
+          cta_text: selectedBanner.cta_text,
+          cta_link: selectedBanner.cta_link,
+        });
+      } catch {}
+
       fetchBanners();
     } catch (error) {
       console.error('Error saving banner:', error);
@@ -135,6 +199,8 @@ const HeroBannerAdmin: React.FC = () => {
         .from('hero-media')
         .getPublicUrl(fileName);
 
+      const oldUrl = selectedBanner.media_url;
+
       const { error } = await supabase
         .from('hero_banners')
         .update({
@@ -152,6 +218,32 @@ const HeroBannerAdmin: React.FC = () => {
       } : null);
 
       setUploadProgress(100);
+
+      // Cache updated banner for live preview on site
+      try {
+        saveBanner(selectedBanner.page_name, {
+          title: selectedBanner.title,
+          subtitle: selectedBanner.subtitle,
+          media_type: isVideo ? 'video' : 'image',
+          media_url: publicUrl,
+          overlay_opacity: selectedBanner.overlay_opacity,
+          text_color: selectedBanner.text_color,
+          cta_text: selectedBanner.cta_text,
+          cta_link: selectedBanner.cta_link,
+        });
+      } catch {}
+
+      // Best-effort cleanup of previous hero media
+      if (oldUrl) {
+        try {
+          const marker = '/object/public/hero-media/';
+          const idx = oldUrl.indexOf(marker);
+          const path = idx !== -1 ? oldUrl.substring(idx + marker.length) : oldUrl;
+          await supabase.storage.from('hero-media').remove([path]);
+        } catch (e) {
+          console.warn('Failed to remove previous hero media', e);
+        }
+      }
 
       toast({
         title: "Success",
@@ -259,8 +351,8 @@ const HeroBannerAdmin: React.FC = () => {
                   <div className="w-full h-full bg-gradient-hero" />
                 )}
                 
-                <div 
-                  className="absolute inset-0 bg-primary" 
+                <div
+                  className="absolute inset-0 bg-primary dark:bg-black"
                   style={{ opacity: selectedBanner.overlay_opacity }}
                 />
               </div>
@@ -363,7 +455,7 @@ const HeroBannerAdmin: React.FC = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center">
                       <Palette className="h-5 w-5 mr-2" />
-                      Styling
+                      Styling & Page Theme
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -407,6 +499,22 @@ const HeroBannerAdmin: React.FC = () => {
                           } : null)}
                           className="mt-2"
                         />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Page Theme Override</Label>
+                        <select
+                          className="mt-2 px-3 py-2 border rounded w-full"
+                          value={pageTheme}
+                          onChange={(e) => setPageTheme(e.target.value as any)}
+                        >
+                          <option value="inherit">Inherit (default)</option>
+                          <option value="light">Light</option>
+                          <option value="dark">Dark</option>
+                        </select>
+                        <p className="text-xs text-muted-foreground mt-1">Applies to this page only. Does not affect user’s manual choice.</p>
                       </div>
                     </div>
                   </CardContent>
@@ -478,117 +586,6 @@ const HeroBannerAdmin: React.FC = () => {
               </TabsContent>
             </Tabs>
           )}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Content</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="title">Title</Label>
-                    <Input
-                      id="title"
-                      value={selectedBanner.title}
-                      onChange={(e) => setSelectedBanner(prev => prev ? {
-                        ...prev,
-                        title: e.target.value
-                      } : null)}
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="subtitle">Subtitle (optional)</Label>
-                    <Textarea
-                      id="subtitle"
-                      value={selectedBanner.subtitle || ''}
-                      onChange={(e) => setSelectedBanner(prev => prev ? {
-                        ...prev,
-                        subtitle: e.target.value || null
-                      } : null)}
-                      rows={3}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="cta-text">CTA Button Text</Label>
-                      <Input
-                        id="cta-text"
-                        value={selectedBanner.cta_text || ''}
-                        onChange={(e) => setSelectedBanner(prev => prev ? {
-                          ...prev,
-                          cta_text: e.target.value || null
-                        } : null)}
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="cta-link">CTA Link (e.g., #contact)</Label>
-                      <Input
-                        id="cta-link"
-                        value={selectedBanner.cta_link || ''}
-                        onChange={(e) => setSelectedBanner(prev => prev ? {
-                          ...prev,
-                          cta_link: e.target.value || null
-                        } : null)}
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Styling Settings */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Palette className="h-5 w-5 mr-2" />
-                    Styling
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="text-color">Text Color</Label>
-                      <div className="flex items-center space-x-2">
-                        <Input
-                          id="text-color"
-                          type="color"
-                          value={selectedBanner.text_color}
-                          onChange={(e) => setSelectedBanner(prev => prev ? {
-                            ...prev,
-                            text_color: e.target.value
-                          } : null)}
-                          className="w-16 h-10"
-                        />
-                        <Input
-                          value={selectedBanner.text_color}
-                          onChange={(e) => setSelectedBanner(prev => prev ? {
-                            ...prev,
-                            text_color: e.target.value
-                          } : null)}
-                          placeholder="#ffffff"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="overlay-opacity">Overlay Opacity: {(selectedBanner.overlay_opacity * 100).toFixed(0)}%</Label>
-                      <Input
-                        id="overlay-opacity"
-                        type="range"
-                        min="0"
-                        max="1"
-                        step="0.05"
-                        value={selectedBanner.overlay_opacity}
-                        onChange={(e) => setSelectedBanner(prev => prev ? {
-                          ...prev,
-                          overlay_opacity: parseFloat(e.target.value)
-                        } : null)}
-                        className="mt-2"
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
         </div>
       )}
     </div>

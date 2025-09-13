@@ -21,6 +21,17 @@ import {
   Twitter,
   Youtube
 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -315,14 +326,29 @@ const FooterManager: React.FC = () => {
                     >
                       Edit
                     </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => deleteFooterItem(item.id)}
-                      className="text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete this footer item?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => deleteFooterItem(item.id)}>Delete</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               ))}
@@ -406,17 +432,17 @@ const FooterManager: React.FC = () => {
             <div>
               <Label htmlFor="icon-select">Icon</Label>
               <Select 
-                value={editingItem.icon_name || ''} 
+                value={(editingItem.icon_name && editingItem.icon_name !== '' ? editingItem.icon_name : 'none')} 
                 onValueChange={(value) => setEditingItem(prev => prev ? {
                   ...prev,
-                  icon_name: value || null
+                  icon_name: value === 'none' ? null : value
                 } : null)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select an icon" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">No icon</SelectItem>
+                  <SelectItem value="none">No icon</SelectItem>
                   {iconOptions.map((icon) => (
                     <SelectItem key={icon.value} value={icon.value}>
                       <div className="flex items-center space-x-2">

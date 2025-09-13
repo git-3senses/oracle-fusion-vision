@@ -88,9 +88,9 @@ const About = () => {
           <Badge variant="outline" className="mb-4">
             About Vijay Apps Consultants
           </Badge>
-          <h2 className="text-3xl lg:text-5xl font-bold mb-6 animate-fade-in">
+          <h2 className="text-3xl lg:text-5xl font-bold mb-6 animate-fade-in dark:text-gradient-muted">
             Transforming Enterprises with 
-            <span className="text-gradient-primary"> Oracle Excellence</span>
+            <span className="text-button-gradient"> Oracle Excellence</span>
           </h2>
           <p className="text-subtitle animate-fade-in" style={{animationDelay: '0.2s'}}>
             With over 15 years of expertise, we've helped 500+ global organizations achieve 
@@ -103,7 +103,7 @@ const About = () => {
           {/* Content */}
           <div className="space-y-8 animate-slide-up">
             <div className="space-y-6">
-              <h3 className="text-2xl lg:text-3xl font-bold">
+              <h3 className="text-2xl lg:text-3xl font-bold dark:text-gradient-muted">
                 Your Trusted Oracle Transformation Partner
               </h3>
               <p className="text-lg text-muted-foreground leading-relaxed">
@@ -130,19 +130,19 @@ const About = () => {
             </div>
 
             {/* Video CTA */}
-            <div className="flex items-center space-x-4 pt-4">
+            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 pt-4 w-full sm:w-auto">
               <Button 
                 variant="premium" 
                 size="lg"
                 onClick={() => scrollToSection('services')}
-                className="hover-lift"
+                className="hover-lift w-full sm:w-auto"
               >
                 Explore Our Services
               </Button>
               <Button 
                 variant="ghost" 
                 size="lg"
-                className="text-primary hover:text-primary-dark"
+                className="text-primary hover:text-primary-dark w-full sm:w-auto"
               >
                 <Play className="h-5 w-5 mr-2" />
                 Watch Our Story
@@ -151,12 +151,12 @@ const About = () => {
           </div>
 
           {/* Image */}
-          <div className="relative animate-scale-in" style={{animationDelay: '0.4s'}}>
+          <div className="relative animate-scale-in overflow-visible" style={{animationDelay: '0.4s'}}>
             <div className="absolute inset-0 bg-gradient-primary rounded-2xl transform rotate-3" />
             <img 
               src={teamImage} 
               alt="Our Expert Team" 
-              className="relative w-full h-96 lg:h-[500px] object-cover rounded-2xl shadow-premium"
+              className="relative w-full aspect-[16/10] lg:aspect-auto h-auto lg:h-[500px] object-cover rounded-2xl shadow-premium"
             />
             
             {/* Floating Cards */}

@@ -12,7 +12,7 @@ const Hero = () => {
   };
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center overflow-hidden">
+    <section id="home" className="relative min-h-[70vh] sm:min-h-screen flex items-center overflow-hidden">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0">
         <img 
@@ -36,7 +36,7 @@ const Hero = () => {
           {/* Main Headline */}
           <h1 className="text-hero mb-6 animate-slide-up">
             Transform Your Enterprise with
-            <span className="block text-gradient-primary bg-gradient-to-r from-accent to-white bg-clip-text text-transparent">
+            <span className="block text-button-gradient">
               Oracle Excellence
             </span>
           </h1>
@@ -73,7 +73,7 @@ const Hero = () => {
           {/* Trust Indicators */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 animate-fade-in" style={{animationDelay: '0.6s'}}>
             <div className="text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-3">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-3 shadow-lg backdrop-blur-sm border border-white/20">
                 <Users className="h-6 w-6" />
               </div>
               <div className="text-2xl font-bold">500+</div>
@@ -81,7 +81,7 @@ const Hero = () => {
             </div>
             
             <div className="text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-3">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-3 shadow-lg backdrop-blur-sm border border-white/20">
                 <Award className="h-6 w-6" />
               </div>
               <div className="text-2xl font-bold">15+</div>
@@ -89,7 +89,7 @@ const Hero = () => {
             </div>
             
             <div className="text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-3">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-3 shadow-lg backdrop-blur-sm border border-white/20">
                 <Globe className="h-6 w-6" />
               </div>
               <div className="text-2xl font-bold">50+</div>
@@ -97,7 +97,7 @@ const Hero = () => {
             </div>
             
             <div className="text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-3">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-3 shadow-lg backdrop-blur-sm border border-white/20">
                 <Shield className="h-6 w-6" />
               </div>
               <div className="text-2xl font-bold">99%</div>
@@ -107,8 +107,8 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Trusted By Section */}
-      <div className="absolute bottom-0 left-0 right-0 bg-white/5 backdrop-blur-sm border-t border-white/10 py-6">
+      {/* Trusted By Section - Hidden */}
+      <div className="hidden absolute bottom-0 left-0 right-0 bg-white/5 backdrop-blur-sm border-t border-white/10 py-6">
         <div className="container mx-auto px-6 lg:px-8">
           <div className="text-center">
             <p className="text-white/80 text-sm mb-4">Trusted by leading enterprises worldwide</p>

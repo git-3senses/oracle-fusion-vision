@@ -3,16 +3,25 @@ import Header from '@/components/Header';
 import HeroBanner from '@/components/HeroBanner';
 import About from '@/components/About';
 import DynamicFooter from '@/components/DynamicFooter';
+import SEOHead from '@/components/SEOHead';
 
 const AboutPage = () => {
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="About Vijay Apps Consultants - Oracle Transformation Experts"
+        description="15+ years of Oracle expertise helping 500+ global organizations achieve digital transformation. Meet our certified Oracle consultants and learn about our proven methodology."
+        keywords="Oracle Consultants, Oracle Experts, Oracle Team, Oracle Implementation Experience, Oracle Certified, Oracle Specialists"
+        canonicalUrl={typeof window !== 'undefined' ? `${window.location.origin}/about` : ''}
+      />
       <Header />
       <main>
         <HeroBanner 
           pageName="about"
           defaultTitle="About Vijay Apps Consultants"
           defaultSubtitle="Your trusted Oracle transformation partner with 15+ years of expertise helping global organizations achieve digital transformation."
+          defaultCtaText="Explore Our Story"
+          defaultCtaLink="about"
         />
         <About />
       </main>

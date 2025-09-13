@@ -82,24 +82,92 @@ const JobOpeningsManager: React.FC = () => {
 
   const fetchJobOpenings = async () => {
     try {
+      // Check if user is authenticated first
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        console.log('Not authenticated - showing demo data');
+        setJobOpenings(getDemoJobOpenings());
+        setIsLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('job_openings')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setJobOpenings(data || []);
+      if (error) {
+        console.error('Database error:', error);
+        // Fallback to demo data if RLS prevents access
+        setJobOpenings(getDemoJobOpenings());
+        toast({
+          title: "Info",
+          description: "Showing demo data - database access restricted",
+          variant: "default"
+        });
+      } else {
+        setJobOpenings(data || getDemoJobOpenings());
+      }
     } catch (error) {
       console.error('Error fetching job openings:', error);
+      setJobOpenings(getDemoJobOpenings());
       toast({
-        title: "Error",
-        description: "Failed to load job openings",
-        variant: "destructive"
+        title: "Info",
+        description: "Showing demo data due to connection issue",
+        variant: "default"
       });
     } finally {
       setIsLoading(false);
     }
   };
+
+  const getDemoJobOpenings = (): JobOpening[] => [
+    {
+      id: '1',
+      title: 'Senior Oracle Fusion Developer',
+      department: 'Engineering',
+      location: 'Remote / Hybrid',
+      type: 'Full-time',
+      experience: '5+ years',
+      skills: ['Oracle Fusion', 'PL/SQL', 'Java', 'REST APIs', 'OIC'],
+      description: 'Lead Oracle Fusion development projects and mentor junior developers in creating scalable enterprise solutions.',
+      requirements: 'Bachelor\'s degree in Computer Science or related field. 5+ years of Oracle Fusion development experience.',
+      is_urgent: true,
+      is_active: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      id: '2',
+      title: 'Oracle EBS Functional Consultant',
+      department: 'Consulting',
+      location: 'Onsite / Remote',
+      type: 'Full-time',
+      experience: '3-5 years',
+      skills: ['Oracle EBS', 'Financials', 'Supply Chain', 'HRMS', 'Business Analysis'],
+      description: 'Work with clients to implement and optimize Oracle EBS modules for business process improvements.',
+      requirements: 'Experience with Oracle EBS R12, functional knowledge of Finance or SCM modules.',
+      is_urgent: false,
+      is_active: true,
+      created_at: new Date(Date.now() - 86400000).toISOString(),
+      updated_at: new Date(Date.now() - 86400000).toISOString()
+    },
+    {
+      id: '3',
+      title: 'Cloud Integration Specialist',
+      department: 'Cloud Solutions',
+      location: 'Remote',
+      type: 'Contract',
+      experience: '4+ years',
+      skills: ['OIC', 'Oracle Cloud', 'Integration', 'SOA', 'APIs'],
+      description: 'Design and implement cloud integration solutions using Oracle Integration Cloud and related technologies.',
+      requirements: 'Strong experience with Oracle Integration Cloud, REST/SOAP services, and cloud architectures.',
+      is_urgent: false,
+      is_active: false,
+      created_at: new Date(Date.now() - 172800000).toISOString(),
+      updated_at: new Date(Date.now() - 172800000).toISOString()
+    }
+  ];
 
   const handleEdit = (job: JobOpening) => {
     setSelectedJob(job);

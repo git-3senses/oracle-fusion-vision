@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { trackBusinessEvent } from '@/components/Analytics';
 
 interface ContactForm {
   name: string;
@@ -99,6 +100,16 @@ const Contact = () => {
       }
 
       setIsSubmitted(true);
+
+      // Track analytics events
+      trackBusinessEvent.contactFormSubmit();
+      if (formData.consultationRequested) {
+        trackBusinessEvent.consultationRequest();
+      }
+      if (formData.serviceInterest) {
+        trackBusinessEvent.serviceInquiry(formData.serviceInterest);
+      }
+
       toast({
         title: "Message Sent Successfully!",
         description: "Thank you for your interest. We'll get back to you within 24 hours.",
@@ -140,27 +151,111 @@ const Contact = () => {
 
   if (isSubmitted) {
     return (
-      <section id="contact" className="py-16 lg:py-24 bg-gradient-hero">{/* Reduced padding */}
+      <section id="contact" className="py-16 lg:py-24 bg-gradient-hero">
         <div className="container mx-auto px-6 lg:px-8">
-          <div className="max-w-2xl mx-auto text-center text-white">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-success rounded-full mb-8">
-              <CheckCircle className="h-10 w-10" />
+          <div className="max-w-4xl mx-auto text-center text-white">
+            {/* Success Icon */}
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-success rounded-full mb-8 animate-scale-in">
+              <CheckCircle className="h-12 w-12" />
             </div>
-            <h2 className="text-3xl lg:text-4xl font-bold mb-6">
-              Thank You for Your Interest!
+
+            {/* Main Success Message */}
+            <h2 className="text-3xl lg:text-5xl font-bold mb-6 animate-fade-in">
+              Message Received Successfully!
             </h2>
-            <p className="text-xl text-white/90 mb-8">
-              We've received your message and will get back to you within 24 hours with 
-              detailed information about how we can help transform your business.
+            <p className="text-xl text-white/90 mb-12 animate-fade-in" style={{animationDelay: '0.2s'}}>
+              Thank you for reaching out. Our Oracle experts will review your requirements
+              and get back to you within 24 hours with a customized solution proposal.
             </p>
-            <Button 
-              variant="accent" 
-              size="lg"
-              onClick={() => setIsSubmitted(false)}
-              className="hover-lift"
-            >
-              Send Another Message
-            </Button>
+
+            {/* What Happens Next */}
+            <div className="grid md:grid-cols-3 gap-8 mb-12 animate-fade-in" style={{animationDelay: '0.4s'}}>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
+                <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Clock className="h-6 w-6" />
+                </div>
+                <h3 className="font-semibold mb-2">Within 2 Hours</h3>
+                <p className="text-sm text-white/80">
+                  Confirmation email sent with your inquiry details
+                </p>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
+                <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Calendar className="h-6 w-6" />
+                </div>
+                <h3 className="font-semibold mb-2">Within 24 Hours</h3>
+                <p className="text-sm text-white/80">
+                  Detailed response from our Oracle specialists
+                </p>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
+                <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Users className="h-6 w-6" />
+                </div>
+                <h3 className="font-semibold mb-2">Next Step</h3>
+                <p className="text-sm text-white/80">
+                  {formData.consultationRequested ? 'Free consultation call scheduled' : 'Detailed proposal and next steps'}
+                </p>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in" style={{animationDelay: '0.6s'}}>
+              <Button
+                variant="accent"
+                size="lg"
+                onClick={() => {
+                  setIsSubmitted(false);
+                  // Reset form data
+                  setFormData({
+                    name: '',
+                    email: '',
+                    company: '',
+                    phone: '',
+                    serviceInterest: '',
+                    message: '',
+                    consultationRequested: false
+                  });
+                }}
+                className="hover-lift"
+              >
+                Send Another Message
+              </Button>
+
+              <Button
+                variant="outline"
+                size="lg"
+                className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+                onClick={() => window.location.href = '/services'}
+              >
+                Explore Our Services
+              </Button>
+            </div>
+
+            {/* Contact Information */}
+            <div className="mt-12 pt-8 border-t border-white/20 animate-fade-in" style={{animationDelay: '0.8s'}}>
+              <p className="text-white/80 mb-4">
+                Need immediate assistance? Contact us directly:
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                <a
+                  href="mailto:vijay_adina@vijayappsconsultants.com"
+                  className="flex items-center text-white hover:text-accent transition-colors"
+                >
+                  <Mail className="h-5 w-5 mr-2" />
+                  vijay_adina@vijayappsconsultants.com
+                </a>
+                <a
+                  href="tel:+1234567890"
+                  className="flex items-center text-white hover:text-accent transition-colors"
+                >
+                  <Phone className="h-5 w-5 mr-2" />
+                  +1 (234) 567-8900
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -177,7 +272,7 @@ const Contact = () => {
           </Badge>
           <h2 className="text-3xl lg:text-5xl font-bold mb-6 animate-fade-in">
             Ready to Transform Your 
-            <span className="text-gradient-primary"> Enterprise?</span>
+            <span className="text-button-gradient"> Enterprise?</span>
           </h2>
           <p className="text-subtitle animate-fade-in" style={{animationDelay: '0.2s'}}>
             Let's discuss your Oracle implementation needs and create a customized solution 
@@ -200,7 +295,7 @@ const Contact = () => {
                     <p className="text-muted-foreground text-sm mb-2">
                       Send us a message anytime
                     </p>
-                    <a href="mailto:vijay_adina@vijayappsconsultants.com" className="text-primary hover:text-primary-dark font-medium">
+                    <a href="mailto:vijay_adina@vijayappsconsultants.com" className="text-primary hover:text-primary-dark font-medium break-all">
                       vijay_adina@vijayappsconsultants.com
                     </a>
                   </div>
@@ -223,28 +318,29 @@ const Contact = () => {
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Additional Features */}
-            <div className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <Calendar className="h-5 w-5 text-primary" />
-                <span className="text-sm">Free initial consultation</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Globe className="h-5 w-5 text-primary" />
-                <span className="text-sm">Global 24/7 support</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Award className="h-5 w-5 text-primary" />
-                <span className="text-sm">Oracle certified experts</span>
+              {/* Benefits card aligned and consistent with above */}
+              <div className="card-premium hover-lift">
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-feature rounded-lg flex items-center justify-center">
+                    <Calendar className="h-6 w-6 text-white" />
+                  </div>
+                  <div className="w-full">
+                    <h3 className="font-semibold mb-1">Why Choose Us</h3>
+                    <ul className="text-sm text-muted-foreground space-y-2 mt-2">
+                      <li className="flex items-center"><Calendar className="h-4 w-4 text-primary mr-2" /> Free initial consultation</li>
+                      <li className="flex items-center"><Globe className="h-4 w-4 text-primary mr-2" /> Global 24/7 support</li>
+                      <li className="flex items-center"><Award className="h-4 w-4 text-primary mr-2" /> Oracle certified experts</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Contact Form */}
-          <div className="lg:col-span-2">
-            <form onSubmit={handleSubmit} className="card-premium space-y-6">
+          <div className="lg:col-span-2 min-w-0">
+            <form onSubmit={handleSubmit} className="card-premium space-y-6 overflow-hidden max-w-full">
               <h3 className="text-2xl font-bold mb-6">Send us a Message</h3>
               
               {/* Name and Email */}
