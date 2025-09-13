@@ -109,19 +109,8 @@ const DynamicFooter = () => {
 
     switch (sectionType) {
       case 'company_info':
-        const companyInfo = items[0];
-        return (
-          <div className="lg:col-span-2 space-y-6">
-            <div>
-              <h3 className="text-2xl font-bold mb-4">
-                {companyInfo.title || 'Vijay Apps Consultants'}
-              </h3>
-              <p className="text-white/80 leading-relaxed max-w-md">
-                {companyInfo.content || 'Leading Oracle consulting firm.'}
-              </p>
-            </div>
-          </div>
-        );
+        // Skip rendering company info section as requested
+        return null;
 
       case 'contact_info':
         return (
@@ -266,13 +255,10 @@ const DynamicFooter = () => {
       <div className="relative container mx-auto px-6 lg:px-8">
         {/* Main Footer Content */}
         <div className="py-16 lg:py-20">
-          <div className="grid lg:grid-cols-4 gap-12">
-            {/* Company Info */}
-            {footerContent.company_info && renderSection('company_info', footerContent.company_info)}
-            
-            {/* Contact Info */}
+          <div className="flex flex-col lg:flex-row items-start justify-between gap-12">
+            {/* Contact Info with Logo */}
             {footerContent.contact_info && (
-              <div>
+              <div className="flex-shrink-0">
                 {renderSection('contact_info', footerContent.contact_info)}
                 
                 {/* Social Links */}
@@ -285,10 +271,18 @@ const DynamicFooter = () => {
             )}
 
             {/* Quick Links */}
-            {footerContent.quick_links && renderSection('quick_links', footerContent.quick_links)}
+            {footerContent.quick_links && (
+              <div className="flex-shrink-0">
+                {renderSection('quick_links', footerContent.quick_links)}
+              </div>
+            )}
 
             {/* Services */}
-            {footerContent.services && renderSection('services', footerContent.services)}
+            {footerContent.services && (
+              <div className="flex-shrink-0">
+                {renderSection('services', footerContent.services)}
+              </div>
+            )}
           </div>
         </div>
 
