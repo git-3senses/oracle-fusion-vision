@@ -15,8 +15,21 @@ import {
 } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { LogOut, Mail, Phone, Building, Calendar, MessageSquare, Image, Settings } from 'lucide-react';
+import { 
+  LogOut, 
+  Mail, 
+  Phone, 
+  Building, 
+  Calendar, 
+  MessageSquare, 
+  Image, 
+  Settings,
+  FileText,
+  Globe
+} from 'lucide-react';
 import HeroBannerAdmin from './HeroBannerAdmin';
+import ContentManager from './ContentManager';
+import FooterManager from './FooterManager';
 
 interface ContactSubmission {
   id: string;
@@ -208,14 +221,22 @@ const AdminPanel = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="submissions" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="submissions" className="flex items-center">
               <Mail className="h-4 w-4 mr-2" />
-              Contact Submissions
+              Contacts
             </TabsTrigger>
             <TabsTrigger value="hero-banners" className="flex items-center">
               <Image className="h-4 w-4 mr-2" />
               Hero Banners
+            </TabsTrigger>
+            <TabsTrigger value="content" className="flex items-center">
+              <FileText className="h-4 w-4 mr-2" />
+              Page Content
+            </TabsTrigger>
+            <TabsTrigger value="footer" className="flex items-center">
+              <Globe className="h-4 w-4 mr-2" />
+              Footer
             </TabsTrigger>
           </TabsList>
 
@@ -367,6 +388,34 @@ const AdminPanel = () => {
               </CardHeader>
               <CardContent>
                 <HeroBannerAdmin />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="content">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <FileText className="h-5 w-5 mr-2" />
+                  Page Content Management
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ContentManager />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="footer">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Globe className="h-5 w-5 mr-2" />
+                  Footer Content Management
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <FooterManager />
               </CardContent>
             </Card>
           </TabsContent>

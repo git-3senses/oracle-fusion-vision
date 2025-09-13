@@ -74,6 +74,48 @@ export type Database = {
         }
         Relationships: []
       }
+      footer_content: {
+        Row: {
+          content: string | null
+          created_at: string
+          icon_name: string | null
+          id: string
+          is_active: boolean | null
+          link_text: string | null
+          link_url: string | null
+          order_index: number | null
+          section_type: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          icon_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          link_text?: string | null
+          link_url?: string | null
+          order_index?: number | null
+          section_type: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          icon_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          link_text?: string | null
+          link_url?: string | null
+          order_index?: number | null
+          section_type?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       hero_banners: {
         Row: {
           created_at: string
@@ -115,6 +157,99 @@ export type Database = {
           subtitle?: string | null
           text_color?: string | null
           title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      page_content: {
+        Row: {
+          button_link: string | null
+          button_text: string | null
+          content: string | null
+          created_at: string
+          id: string
+          image_alt: string | null
+          image_url: string | null
+          is_active: boolean | null
+          order_index: number | null
+          page_name: string
+          section_name: string
+          subtitle: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          button_link?: string | null
+          button_text?: string | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          image_alt?: string | null
+          image_url?: string | null
+          is_active?: boolean | null
+          order_index?: number | null
+          page_name: string
+          section_name: string
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          button_link?: string | null
+          button_text?: string | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          image_alt?: string | null
+          image_url?: string | null
+          is_active?: boolean | null
+          order_index?: number | null
+          page_name?: string
+          section_name?: string
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      page_images: {
+        Row: {
+          created_at: string
+          id: string
+          image_alt: string | null
+          image_caption: string | null
+          image_type: string | null
+          image_url: string
+          is_active: boolean | null
+          order_index: number | null
+          page_name: string
+          section_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_alt?: string | null
+          image_caption?: string | null
+          image_type?: string | null
+          image_url: string
+          is_active?: boolean | null
+          order_index?: number | null
+          page_name: string
+          section_name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_alt?: string | null
+          image_caption?: string | null
+          image_type?: string | null
+          image_url?: string
+          is_active?: boolean | null
+          order_index?: number | null
+          page_name?: string
+          section_name?: string
           updated_at?: string
         }
         Relationships: []

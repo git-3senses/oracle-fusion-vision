@@ -2,7 +2,7 @@ import React from 'react';
 import Header from '@/components/Header';
 import HeroBanner from '@/components/HeroBanner';
 import Contact from '@/components/Contact';
-import Footer from '@/components/Footer';
+import DynamicFooter from '@/components/DynamicFooter';
 
 const ContactPage = () => {
   return (
@@ -16,7 +16,7 @@ const ContactPage = () => {
         />
         <Contact />
       </main>
-      <Footer />
+      <DynamicFooter />
     </div>
   );
 };

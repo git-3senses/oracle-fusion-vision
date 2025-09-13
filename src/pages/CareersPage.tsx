@@ -2,7 +2,7 @@ import React from 'react';
 import Header from '@/components/Header';
 import HeroBanner from '@/components/HeroBanner';
 import Careers from '@/components/Careers';
-import Footer from '@/components/Footer';
+import DynamicFooter from '@/components/DynamicFooter';
 
 const CareersPage = () => {
   return (
@@ -16,7 +16,7 @@ const CareersPage = () => {
         />
         <Careers />
       </main>
-      <Footer />
+      <DynamicFooter />
     </div>
   );
 };

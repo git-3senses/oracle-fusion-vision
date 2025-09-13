@@ -5,7 +5,7 @@ import About from '@/components/About';
 import Services from '@/components/Services';
 import Careers from '@/components/Careers';
 import Contact from '@/components/Contact';
-import Footer from '@/components/Footer';
+import DynamicFooter from '@/components/DynamicFooter';
 
 const Index = () => {
   return (
@@ -22,7 +22,7 @@ const Index = () => {
         <Careers />
         <Contact />
       </main>
-      <Footer />
+      <DynamicFooter />
     </div>
   );
 };
