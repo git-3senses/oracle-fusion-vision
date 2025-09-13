@@ -77,7 +77,9 @@ const HeroBannerAdmin: React.FC = () => {
           overlay_opacity: selectedBanner.overlay_opacity,
           text_color: selectedBanner.text_color,
           cta_text: selectedBanner.cta_text,
-          cta_link: selectedBanner.cta_link
+          cta_link: selectedBanner.cta_link,
+          media_type: selectedBanner.media_type,
+          media_url: selectedBanner.media_url
         })
         .eq('id', selectedBanner.id);
 
@@ -455,8 +457,11 @@ const HeroBannerAdmin: React.FC = () => {
                 <MediaStorageManager
                   bucketName="hero-media"
                   onFileSelect={(file) => {
-                    const publicUrl = `https://invumsddzktxfvdfxscg.supabase.co/storage/v1/object/public/hero-media/${file.name}`;
-                    const isVideo = file.metadata?.mimetype?.startsWith('video/') || false;
+                    const { data: { publicUrl } } = supabase.storage
+                      .from('hero-media')
+                      .getPublicUrl(file.name);
+                    const isVideo = file.metadata?.mimetype?.startsWith('video/') 
+                      || /\.(mp4|webm|mov)(\?|$)/i.test(file.name);
                     
                     setSelectedBanner(prev => prev ? {
                       ...prev,

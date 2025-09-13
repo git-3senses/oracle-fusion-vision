@@ -73,18 +73,33 @@ const SiteSettingsManager: React.FC = () => {
 
   const updateSetting = async (key: string, value: string | null) => {
     try {
-      const { error } = await supabase
-        .from('site_settings')
-        .update({ setting_value: value })
-        .eq('setting_key', key);
-
-      if (error) throw error;
-
-      // Update local state
-      setSettings(prev => ({
-        ...prev,
-        [key]: { ...prev[key], setting_value: value }
-      }));
+      const exists = !!settings[key];
+      if (exists) {
+        const { error } = await supabase
+          .from('site_settings')
+          .update({ setting_value: value })
+          .eq('setting_key', key);
+        if (error) throw error;
+        setSettings(prev => ({
+          ...prev,
+          [key]: { ...prev[key], setting_value: value }
+        }));
+      } else {
+        const insertRow = {
+          setting_key: key,
+          setting_value: value,
+          setting_type: 'text' as const,
+          description: key.replace(/_/g, ' ')
+        };
+        const { error } = await supabase
+          .from('site_settings')
+          .insert(insertRow);
+        if (error) throw error;
+        setSettings(prev => ({
+          ...prev,
+          [key]: { id: key as any, ...insertRow } as any
+        }));
+      }
     } catch (error) {
       console.error('Error updating setting:', error);
       throw error;
@@ -162,6 +177,81 @@ const SiteSettingsManager: React.FC = () => {
         description: 'Failed to remove logo',
         variant: 'destructive'
       });
+    }
+  };
+
+  // Sync selected site settings into footer_content table
+  const syncFooterFromSettings = async () => {
+    const get = (k: string) => settings[k]?.setting_value || '';
+    try {
+      // Build payloads from settings
+      const rows: any[] = [];
+
+      // Company info
+      if (get('company_name') || get('company_tagline')) {
+        rows.push({
+          section_type: 'company_info',
+          title: get('company_name') || 'Company',
+          content: get('company_tagline') || null,
+          link_url: null,
+          link_text: null,
+          icon_name: null,
+          order_index: 0,
+          is_active: true,
+        });
+      }
+
+      // Contact info
+      const email = get('primary_email');
+      const phone = get('primary_phone');
+      const address = get('address');
+      let contactIndex = 0;
+      if (email) rows.push({ section_type: 'contact_info', title: 'Email', content: email, link_url: `mailto:${email}` , link_text: email, icon_name: 'mail', order_index: contactIndex++, is_active: true });
+      if (phone) rows.push({ section_type: 'contact_info', title: 'Phone', content: phone, link_url: `tel:${phone}` , link_text: phone, icon_name: 'phone', order_index: contactIndex++, is_active: true });
+      if (address) rows.push({ section_type: 'contact_info', title: 'Address', content: address, link_url: null , link_text: null, icon_name: 'map-pin', order_index: contactIndex++, is_active: true });
+
+      // Social links
+      const linkedin = get('linkedin_url');
+      const twitter = get('twitter_url');
+      const youtube = get('youtube_url');
+      let socialIndex = 0;
+      if (linkedin) rows.push({ section_type: 'social_links', title: 'LinkedIn', content: null, link_url: linkedin, link_text: 'LinkedIn', icon_name: 'linkedin', order_index: socialIndex++, is_active: true });
+      if (twitter) rows.push({ section_type: 'social_links', title: 'Twitter', content: null, link_url: twitter, link_text: 'Twitter', icon_name: 'twitter', order_index: socialIndex++, is_active: true });
+      if (youtube) rows.push({ section_type: 'social_links', title: 'YouTube', content: null, link_url: youtube, link_text: 'YouTube', icon_name: 'youtube', order_index: socialIndex++, is_active: true });
+
+      // Legal
+      const copyright = get('footer_copyright_text') || `© ${new Date().getFullYear()} ${get('company_name')}`;
+      const certifications = get('footer_certifications_text');
+      const privacy = get('footer_privacy_url');
+      const terms = get('footer_terms_url');
+      let legalIndex = 0;
+      if (copyright)
+        rows.push({ section_type: 'legal', title: 'Copyright', content: copyright, link_url: null, link_text: null, icon_name: null, order_index: legalIndex++, is_active: true });
+      if (certifications)
+        rows.push({ section_type: 'legal', title: 'Certifications', content: certifications, link_url: null, link_text: null, icon_name: null, order_index: legalIndex++, is_active: true });
+      if (privacy)
+        rows.push({ section_type: 'legal', title: 'Privacy Policy', content: '#', link_url: privacy, link_text: 'Privacy Policy', icon_name: null, order_index: legalIndex++, is_active: true });
+      if (terms)
+        rows.push({ section_type: 'legal', title: 'Terms of Service', content: '#', link_url: terms, link_text: 'Terms of Service', icon_name: null, order_index: legalIndex++, is_active: true });
+
+      // Replace existing content for managed sections
+      const { error: delError } = await supabase
+        .from('footer_content')
+        .delete()
+        .in('section_type', ['company_info','contact_info','social_links','legal']);
+      if (delError) throw delError;
+
+      if (rows.length > 0) {
+        const { error: insError } = await supabase
+          .from('footer_content')
+          .insert(rows);
+        if (insError) throw insError;
+      }
+
+      toast({ title: 'Footer updated', description: 'Footer content synced from Site Settings.' });
+    } catch (error) {
+      console.error('Error syncing footer:', error);
+      toast({ title: 'Error', description: 'Failed to update footer content', variant: 'destructive' });
     }
   };
 
@@ -256,7 +346,7 @@ const SiteSettingsManager: React.FC = () => {
   return (
     <div className="space-y-6">
       <Tabs defaultValue="company" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="company" className="flex items-center space-x-2">
             <Building className="h-4 w-4" />
             <span>Company</span>
@@ -268,6 +358,10 @@ const SiteSettingsManager: React.FC = () => {
           <TabsTrigger value="social" className="flex items-center space-x-2">
             <Globe className="h-4 w-4" />
             <span>Social</span>
+          </TabsTrigger>
+          <TabsTrigger value="footer" className="flex items-center space-x-2">
+            <Globe className="h-4 w-4" />
+            <span>Footer</span>
           </TabsTrigger>
           <TabsTrigger value="general" className="flex items-center space-x-2">
             <Settings className="h-4 w-4" />
@@ -353,6 +447,68 @@ const SiteSettingsManager: React.FC = () => {
                   </div>
                 );
               })}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="footer">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Globe className="h-5 w-5 mr-2" />
+                Footer Settings
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium">Copyright Text</Label>
+                  <Textarea
+                    value={settings['footer_copyright_text']?.setting_value || ''}
+                    onChange={(e) => updateSetting('footer_copyright_text', e.target.value)}
+                    rows={3}
+                    placeholder={`© ${new Date().getFullYear()} ${settings['company_name']?.setting_value || 'Your Company'}`}
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Certifications Text</Label>
+                  <Textarea
+                    value={settings['footer_certifications_text']?.setting_value || ''}
+                    onChange={(e) => updateSetting('footer_certifications_text', e.target.value)}
+                    rows={3}
+                    placeholder="ISO 27001 | SOC 2 | Oracle Partner"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium">Privacy Policy URL</Label>
+                  <Input
+                    value={settings['footer_privacy_url']?.setting_value || ''}
+                    onChange={(e) => updateSetting('footer_privacy_url', e.target.value)}
+                    placeholder="/privacy-policy or https://..."
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Terms of Service URL</Label>
+                  <Input
+                    value={settings['footer_terms_url']?.setting_value || ''}
+                    onChange={(e) => updateSetting('footer_terms_url', e.target.value)}
+                    placeholder="/terms or https://..."
+                  />
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <Button onClick={syncFooterFromSettings} size="sm">
+                  <Save className="h-4 w-4 mr-2" />
+                  Update Footer Content
+                </Button>
+                <p className="text-xs text-muted-foreground mt-2">
+                  This will overwrite Company, Contact, Social and Legal sections in footer to match settings above.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
