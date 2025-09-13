@@ -1,6 +1,6 @@
 import React from 'react';
 import Header from '@/components/Header';
-import Hero from '@/components/Hero';
+import HeroBanner from '@/components/HeroBanner';
 import About from '@/components/About';
 import Services from '@/components/Services';
 import Careers from '@/components/Careers';
@@ -12,7 +12,11 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <main>
-        <Hero />
+        <HeroBanner 
+          pageName="home"
+          defaultTitle="Transform Your Enterprise with Oracle Excellence"
+          defaultSubtitle="Leading Oracle E-Business Suite & Fusion consulting firm delivering enterprise-grade solutions, AI-enhanced implementations, and strategic business transformation for global organizations."
+        />
         <About />
         <Services />
         <Careers />

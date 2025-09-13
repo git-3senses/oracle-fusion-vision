@@ -56,6 +56,51 @@ export type Database = {
         }
         Relationships: []
       }
+      hero_banners: {
+        Row: {
+          created_at: string
+          cta_link: string | null
+          cta_text: string | null
+          id: string
+          media_type: string | null
+          media_url: string | null
+          overlay_opacity: number | null
+          page_name: string
+          subtitle: string | null
+          text_color: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cta_link?: string | null
+          cta_text?: string | null
+          id?: string
+          media_type?: string | null
+          media_url?: string | null
+          overlay_opacity?: number | null
+          page_name: string
+          subtitle?: string | null
+          text_color?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cta_link?: string | null
+          cta_text?: string | null
+          id?: string
+          media_type?: string | null
+          media_url?: string | null
+          overlay_opacity?: number | null
+          page_name?: string
+          subtitle?: string | null
+          text_color?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

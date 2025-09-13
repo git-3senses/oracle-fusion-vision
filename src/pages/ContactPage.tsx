@@ -1,5 +1,6 @@
 import React from 'react';
 import Header from '@/components/Header';
+import HeroBanner from '@/components/HeroBanner';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 
@@ -7,7 +8,12 @@ const ContactPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="pt-20">
+      <main>
+        <HeroBanner 
+          pageName="contact"
+          defaultTitle="Get In Touch"
+          defaultSubtitle="Ready to transform your business? Let's discuss how our Oracle expertise can drive your digital transformation."
+        />
         <Contact />
       </main>
       <Footer />

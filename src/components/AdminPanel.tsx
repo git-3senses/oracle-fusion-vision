@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Table,
   TableBody,
@@ -14,7 +15,8 @@ import {
 } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { LogOut, Mail, Phone, Building, Calendar, MessageSquare } from 'lucide-react';
+import { LogOut, Mail, Phone, Building, Calendar, MessageSquare, Image, Settings } from 'lucide-react';
+import HeroBannerAdmin from './HeroBannerAdmin';
 
 interface ContactSubmission {
   id: string;
@@ -204,141 +206,171 @@ const AdminPanel = () => {
           </Button>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="text-2xl font-bold text-primary">
-                {submissions.length}
-              </div>
-              <p className="text-muted-foreground">Total Submissions</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="text-2xl font-bold text-blue-500">
-                {submissions.filter(s => s.status === 'new').length}
-              </div>
-              <p className="text-muted-foreground">New</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="text-2xl font-bold text-orange-500">
-                {submissions.filter(s => s.status === 'in_progress').length}
-              </div>
-              <p className="text-muted-foreground">In Progress</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="text-2xl font-bold text-green-500">
-                {submissions.filter(s => s.consultation_requested).length}
-              </div>
-              <p className="text-muted-foreground">Consultation Requests</p>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Tabs */}
+        <Tabs defaultValue="submissions" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="submissions" className="flex items-center">
+              <Mail className="h-4 w-4 mr-2" />
+              Contact Submissions
+            </TabsTrigger>
+            <TabsTrigger value="hero-banners" className="flex items-center">
+              <Image className="h-4 w-4 mr-2" />
+              Hero Banners
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Submissions Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Contact Submissions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Contact</TableHead>
-                  <TableHead>Company</TableHead>
-                  <TableHead>Service</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {submissions.map((submission) => (
-                  <TableRow key={submission.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{submission.name}</div>
-                        {submission.consultation_requested && (
-                          <Badge variant="secondary" className="text-xs">
-                            Consultation Requested
-                          </Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="space-y-1">
-                        <div className="flex items-center text-sm">
-                          <Mail className="h-3 w-3 mr-2" />
-                          {submission.email}
-                        </div>
-                        {submission.phone && (
-                          <div className="flex items-center text-sm text-muted-foreground">
-                            <Phone className="h-3 w-3 mr-2" />
-                            {submission.phone}
+          <TabsContent value="submissions" className="space-y-6">
+            {/* Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <Card>
+                <CardContent className="p-6">
+                  <div className="text-2xl font-bold text-primary">
+                    {submissions.length}
+                  </div>
+                  <p className="text-muted-foreground">Total Submissions</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="text-2xl font-bold text-blue-500">
+                    {submissions.filter(s => s.status === 'new').length}
+                  </div>
+                  <p className="text-muted-foreground">New</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="text-2xl font-bold text-orange-500">
+                    {submissions.filter(s => s.status === 'in_progress').length}
+                  </div>
+                  <p className="text-muted-foreground">In Progress</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="text-2xl font-bold text-green-500">
+                    {submissions.filter(s => s.consultation_requested).length}
+                  </div>
+                  <p className="text-muted-foreground">Consultation Requests</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Submissions Table */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Contact Submissions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Contact</TableHead>
+                      <TableHead>Company</TableHead>
+                      <TableHead>Service</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {submissions.map((submission) => (
+                      <TableRow key={submission.id}>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">{submission.name}</div>
+                            {submission.consultation_requested && (
+                              <Badge variant="secondary" className="text-xs">
+                                Consultation Requested
+                              </Badge>
+                            )}
                           </div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {submission.company && (
-                        <div className="flex items-center text-sm">
-                          <Building className="h-3 w-3 mr-2" />
-                          {submission.company}
-                        </div>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {submission.service_interest && (
-                        <Badge variant="outline" className="text-xs">
-                          {submission.service_interest}
-                        </Badge>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <select
-                        value={submission.status}
-                        onChange={(e) => updateStatus(submission.id, e.target.value)}
-                        className="px-2 py-1 rounded text-xs border"
-                      >
-                        <option value="new">New</option>
-                        <option value="contacted">Contacted</option>
-                        <option value="in_progress">In Progress</option>
-                        <option value="closed">Closed</option>
-                      </select>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Calendar className="h-3 w-3 mr-2" />
-                        {new Date(submission.created_at).toLocaleDateString()}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          // Show message details
-                          toast({
-                            title: "Message",
-                            description: submission.message,
-                          });
-                        }}
-                      >
-                        <MessageSquare className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+                        </TableCell>
+                        <TableCell>
+                          <div className="space-y-1">
+                            <div className="flex items-center text-sm">
+                              <Mail className="h-3 w-3 mr-2" />
+                              {submission.email}
+                            </div>
+                            {submission.phone && (
+                              <div className="flex items-center text-sm text-muted-foreground">
+                                <Phone className="h-3 w-3 mr-2" />
+                                {submission.phone}
+                              </div>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {submission.company && (
+                            <div className="flex items-center text-sm">
+                              <Building className="h-3 w-3 mr-2" />
+                              {submission.company}
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {submission.service_interest && (
+                            <Badge variant="outline" className="text-xs">
+                              {submission.service_interest}
+                            </Badge>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <select
+                            value={submission.status}
+                            onChange={(e) => updateStatus(submission.id, e.target.value)}
+                            className="px-2 py-1 rounded text-xs border"
+                          >
+                            <option value="new">New</option>
+                            <option value="contacted">Contacted</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="closed">Closed</option>
+                          </select>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center text-sm text-muted-foreground">
+                            <Calendar className="h-3 w-3 mr-2" />
+                            {new Date(submission.created_at).toLocaleDateString()}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              // Show message details
+                              toast({
+                                title: "Message",
+                                description: submission.message,
+                              });
+                            }}
+                          >
+                            <MessageSquare className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="hero-banners">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Image className="h-5 w-5 mr-2" />
+                  Hero Banner Management
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <HeroBannerAdmin />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
