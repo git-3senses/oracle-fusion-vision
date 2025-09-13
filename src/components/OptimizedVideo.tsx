@@ -4,6 +4,17 @@ import { Button } from '@/components/ui/button';
 import { useVideoLazyLoading } from '@/hooks/useVideoLazyLoading';
 import { cn } from '@/lib/utils';
 
+// Infer a reasonable mime type from the video URL
+const getMimeTypeFromUrl = (url: string): string => {
+  const clean = url.split('?')[0].toLowerCase();
+  if (clean.endsWith('.webm')) return 'video/webm';
+  if (clean.endsWith('.mov') || clean.endsWith('.qt')) return 'video/quicktime';
+  if (clean.endsWith('.m3u8')) return 'application/x-mpegURL';
+  if (clean.endsWith('.mpd')) return 'application/dash+xml';
+  if (clean.endsWith('.ogg') || clean.endsWith('.ogv')) return 'video/ogg';
+  return 'video/mp4';
+};
+
 interface OptimizedVideoProps {
   src: string;
   poster?: string;
@@ -155,7 +166,7 @@ const OptimizedVideo: React.FC<OptimizedVideoProps> = ({
         onError={handleError}
         style={{ display: isLoading ? 'none' : 'block' }}
       >
-        <source src={src} type="video/mp4" />
+        <source src={src} type={getMimeTypeFromUrl(src)} />
         {poster && (
           <img src={poster} alt={alt} className="w-full h-full object-cover" />
         )}

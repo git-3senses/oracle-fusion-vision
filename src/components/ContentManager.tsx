@@ -552,7 +552,7 @@ const ContentManager: React.FC = () => {
                   {pageImages.map((image) => (
                     <div key={image.id} className="border rounded-lg overflow-hidden">
                       <div className="aspect-video relative">
-                        {image.image_url.includes('.mp4') || image.image_url.includes('.webm') || image.image_url.includes('.mov') ? (
+                        {/\.(mp4|webm|mov)(\?|$)/i.test(image.image_url) ? (
                           <video
                             src={image.image_url}
                             className="w-full h-full object-cover"

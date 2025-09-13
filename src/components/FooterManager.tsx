@@ -95,22 +95,30 @@ const FooterManager: React.FC = () => {
       setIsSaving(true);
       
       if (item.id) {
-        // Update existing item
+        // Update existing item (exclude id from payload)
+        const { id, ...updateFields } = item as any;
         const { error } = await supabase
           .from('footer_content')
-          .update(item)
+          .update(updateFields)
           .eq('id', item.id);
         
         if (error) throw error;
       } else {
-        // Create new item
+        // Create new item - build explicit payload to avoid invalid id
+        const { title, content, link_url, link_text, icon_name, is_active } = item;
+        const insertPayload = {
+          section_type: selectedSection,
+          order_index: footerContent.length,
+          title: title ?? null,
+          content: content ?? null,
+          link_url: link_url ?? null,
+          link_text: link_text ?? null,
+          icon_name: icon_name ?? null,
+          is_active: is_active ?? true,
+        };
         const { error } = await supabase
           .from('footer_content')
-          .insert({
-            ...item,
-            section_type: selectedSection,
-            order_index: footerContent.length
-          });
+          .insert(insertPayload);
         
         if (error) throw error;
       }
