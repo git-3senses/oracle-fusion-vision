@@ -64,8 +64,29 @@ const AdminPanel = () => {
     }
   }, [isAuthenticated]);
 
+  const logActivity = async (action: string, resource?: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.from('admin_activity_logs').insert({
+          user_id: user.id,
+          user_email: user.email,
+          action,
+          resource,
+          ip_address: 'client-side', // Could be enhanced with actual IP detection
+          user_agent: navigator.userAgent
+        });
+      }
+    } catch (error) {
+      console.error('Failed to log activity:', error);
+    }
+  };
+
   const checkAuthStatus = async () => {
     const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      await logActivity('admin_panel_access', 'dashboard');
+    }
     setIsAuthenticated(!!session);
   };
 
@@ -84,6 +105,7 @@ const AdminPanel = () => {
       }
 
       setIsAuthenticated(true);
+      await logActivity('admin_login', 'authentication');
       toast({
         title: "Login Successful",
         description: "Welcome to the admin panel.",
@@ -100,6 +122,7 @@ const AdminPanel = () => {
   };
 
   const handleLogout = async () => {
+    await logActivity('admin_logout', 'authentication');
     await supabase.auth.signOut();
     setIsAuthenticated(false);
     setSubmissions([]);
@@ -137,6 +160,8 @@ const AdminPanel = () => {
         throw error;
       }
 
+      await logActivity('status_update', `contact_submission:${id}`);
+      
       setSubmissions(prev => 
         prev.map(sub => sub.id === id ? { ...sub, status } : sub)
       );
