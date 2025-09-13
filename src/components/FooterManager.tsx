@@ -412,7 +412,7 @@ const FooterManager: React.FC = () => {
                   {iconOptions.map((icon) => (
                     <SelectItem key={icon.value} value={icon.value}>
                       <div className="flex items-center space-x-2">
-                        <icon.component className="h-4 w-4" />
+                        {React.createElement(icon.component, { className: 'h-4 w-4' })}
                         <span>{icon.label}</span>
                       </div>
                     </SelectItem>
