@@ -130,6 +130,8 @@ const AdminPanel = () => {
 
   const fetchSubmissions = async () => {
     try {
+      await logActivity('view_contact_submissions', 'contact_submissions');
+      
       const { data, error } = await supabase
         .from('contact_submissions')
         .select('*')
@@ -141,11 +143,21 @@ const AdminPanel = () => {
 
       setSubmissions(data || []);
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: "Failed to fetch submissions.",
-        variant: "destructive"
-      });
+      // If user is not an admin, they won't be able to access submissions
+      if (error.message?.includes('row-level security')) {
+        toast({
+          title: "Access Denied",
+          description: "You don't have permission to view contact submissions.",
+          variant: "destructive"
+        });
+        handleLogout(); // Force logout if not admin
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to fetch submissions.",
+          variant: "destructive"
+        });
+      }
     }
   };
 
