@@ -26,10 +26,12 @@ interface FooterContentData {
 
 const DynamicFooter = () => {
   const [footerContent, setFooterContent] = useState<Record<string, FooterContentData[]>>({});
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchFooterContent();
+    fetchLogoUrl();
   }, []);
 
   const fetchFooterContent = async () => {
@@ -54,10 +56,25 @@ const DynamicFooter = () => {
       setFooterContent(grouped);
     } catch (error) {
       console.error('Error fetching footer content:', error);
-      // Fallback to default content if database fails
       setFooterContent({});
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchLogoUrl = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('setting_value')
+        .eq('setting_key', 'logo_url')
+        .single();
+
+      if (data?.setting_value) {
+        setLogoUrl(data.setting_value);
+      }
+    } catch (error) {
+      console.error('Error fetching logo:', error);
     }
   };
 
@@ -108,22 +125,35 @@ const DynamicFooter = () => {
 
       case 'contact_info':
         return (
-          <div className="space-y-3">
-            {items.map((item) => (
-              <div key={item.id} className="flex items-center space-x-3">
-                {getIconComponent(item.icon_name)}
-                {item.link_url ? (
-                  <a 
-                    href={item.link_url} 
-                    className="text-white/80 hover:text-white transition-colors"
-                  >
-                    {item.content}
-                  </a>
-                ) : (
-                  <span className="text-white/80">{item.content}</span>
-                )}
+          <div className="space-y-6">
+            {/* Logo above contact info */}
+            {logoUrl && (
+              <div className="mb-6">
+                <img 
+                  src={logoUrl} 
+                  alt="Company Logo" 
+                  className="h-12 w-auto"
+                />
               </div>
-            ))}
+            )}
+            
+            <div className="space-y-3">
+              {items.map((item) => (
+                <div key={item.id} className="flex items-center space-x-3">
+                  {getIconComponent(item.icon_name)}
+                  {item.link_url ? (
+                    <a 
+                      href={item.link_url} 
+                      className="text-white/80 hover:text-white transition-colors"
+                    >
+                      {item.content}
+                    </a>
+                  ) : (
+                    <span className="text-white/80">{item.content}</span>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         );
 
