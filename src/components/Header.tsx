@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Upload } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -7,6 +8,8 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -32,13 +35,13 @@ const Header = () => {
     }
   };
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-    setIsMenuOpen(false);
-  };
+  const navItems = [
+    { name: 'Home', path: '/' },
+    { name: 'About', path: '/about' },
+    { name: 'Services', path: '/services' },
+    { name: 'Careers', path: '/careers' },
+    { name: 'Contact', path: '/contact' }
+  ];
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border shadow-sm">
@@ -83,41 +86,30 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">
-            <button 
-              onClick={() => scrollToSection('home')}
-              className="text-foreground hover:text-primary transition-colors font-medium"
-            >
-              Home
-            </button>
-            <button 
-              onClick={() => scrollToSection('about')}
-              className="text-foreground hover:text-primary transition-colors font-medium"
-            >
-              About
-            </button>
-            <button 
-              onClick={() => scrollToSection('services')}
-              className="text-foreground hover:text-primary transition-colors font-medium"
-            >
-              Services
-            </button>
-            <button 
-              onClick={() => scrollToSection('contact')}
-              className="text-foreground hover:text-primary transition-colors font-medium"
-            >
-              Contact
-            </button>
+            {navItems.map((item, index) => (
+              <button
+                key={index}
+                onClick={() => navigate(item.path)}
+                className={`transition-colors font-medium ${
+                  location.pathname === item.path 
+                    ? 'text-primary' 
+                    : 'text-foreground hover:text-primary'
+                }`}
+              >
+                {item.name}
+              </button>
+            ))}
           </nav>
 
           {/* CTA Button */}
           <div className="hidden lg:flex items-center space-x-4">
             <Button 
-              variant="hero" 
-              size="lg"
-              onClick={() => scrollToSection('contact')}
+              variant="premium" 
+              size="lg" 
               className="hover-lift"
+              onClick={() => navigate('/contact')}
             >
-              Book Free Consultation
+              Get Free Consultation
             </Button>
           </div>
 
@@ -134,37 +126,32 @@ const Header = () => {
         {isMenuOpen && (
           <div className="lg:hidden py-4 border-t border-border animate-fade-in">
             <nav className="flex flex-col space-y-4">
-              <button 
-                onClick={() => scrollToSection('home')}
-                className="text-left py-2 text-foreground hover:text-primary transition-colors font-medium"
-              >
-                Home
-              </button>
-              <button 
-                onClick={() => scrollToSection('about')}
-                className="text-left py-2 text-foreground hover:text-primary transition-colors font-medium"
-              >
-                About
-              </button>
-              <button 
-                onClick={() => scrollToSection('services')}
-                className="text-left py-2 text-foreground hover:text-primary transition-colors font-medium"
-              >
-                Services
-              </button>
-              <button 
-                onClick={() => scrollToSection('contact')}
-                className="text-left py-2 text-foreground hover:text-primary transition-colors font-medium"
-              >
-                Contact
-              </button>
+              {navItems.map((item, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    navigate(item.path);
+                    setIsMenuOpen(false);
+                  }}
+                  className={`block text-left transition-colors font-medium py-2 ${
+                    location.pathname === item.path 
+                      ? 'text-primary' 
+                      : 'text-foreground hover:text-primary'
+                  }`}
+                >
+                  {item.name}
+                </button>
+              ))}
               <Button 
-                variant="hero" 
-                size="lg"
-                onClick={() => scrollToSection('contact')}
-                className="w-full mt-4"
+                variant="premium" 
+                size="lg" 
+                className="w-full hover-lift mt-4"
+                onClick={() => {
+                  navigate('/contact');
+                  setIsMenuOpen(false);
+                }}
               >
-                Book Free Consultation
+                Get Free Consultation
               </Button>
             </nav>
           </div>

@@ -18,11 +18,11 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 225 15% 20%;
 
-    /* Oracle-inspired primary blues */
-    --primary: 219 89% 26%;
+    /* Professional Enterprise Navy */
+    --primary: 220 75% 12%;
     --primary-foreground: 0 0% 100%;
-    --primary-light: 219 89% 35%;
-    --primary-dark: 219 89% 18%;
+    --primary-light: 220 75% 18%;
+    --primary-dark: 220 75% 8%;
 
     /* Professional secondary */
     --secondary: 220 13% 96%;
@@ -32,15 +32,15 @@ All colors MUST be HSL.
     --muted: 220 13% 96%;
     --muted-foreground: 225 8% 55%;
 
-    /* Premium accent colors */
-    --accent: 35 91% 65%;
-    --accent-foreground: 225 15% 20%;
-    --accent-dark: 35 91% 55%;
+    /* Professional Crimson Red */
+    --accent: 342 82% 58%;
+    --accent-foreground: 0 0% 100%;
+    --accent-dark: 342 82% 48%;
 
-    /* Professional purple for features */
-    --feature: 260 60% 45%;
+    /* Warm Orange for features */
+    --feature: 28 82% 55%;
     --feature-foreground: 0 0% 100%;
-    --feature-light: 260 60% 55%;
+    --feature-light: 28 82% 65%;
 
     /* Status colors */
     --destructive: 0 84% 60%;

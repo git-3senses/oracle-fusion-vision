@@ -200,8 +200,8 @@ const Contact = () => {
                     <p className="text-muted-foreground text-sm mb-2">
                       Send us a message anytime
                     </p>
-                    <a href="mailto:Vijay@2025apps" className="text-primary hover:text-primary-dark font-medium">
-                      Vijay@2025apps
+                    <a href="mailto:info@vijayapps.com" className="text-primary hover:text-primary-dark font-medium">
+                      info@vijayapps.com
                     </a>
                   </div>
                 </div>
@@ -210,31 +210,16 @@ const Contact = () => {
               <div className="card-premium hover-lift">
                 <div className="flex items-start space-x-4">
                   <div className="flex-shrink-0 w-12 h-12 bg-gradient-accent rounded-lg flex items-center justify-center">
-                    <Phone className="h-6 w-6 text-accent-foreground" />
+                    <Phone className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1">Call Us</h3>
                     <p className="text-muted-foreground text-sm mb-2">
                       Speak with our experts
                     </p>
-                    <a href="mailto:Avbhaskarreddy@gmail.com" className="text-primary hover:text-primary-dark font-medium">
-                      Avbhaskarreddy@gmail.com
+                    <a href="tel:+916303526930" className="text-primary hover:text-primary-dark font-medium">
+                      +91 630 352 6930
                     </a>
-                  </div>
-                </div>
-              </div>
-
-              <div className="card-premium hover-lift">
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-feature rounded-lg flex items-center justify-center">
-                    <Clock className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">Response Time</h3>
-                    <p className="text-muted-foreground text-sm mb-2">
-                      We typically respond within
-                    </p>
-                    <p className="text-primary font-medium">24 Hours</p>
                   </div>
                 </div>
               </div>
