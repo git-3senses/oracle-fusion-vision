@@ -161,6 +161,54 @@ export type Database = {
         }
         Relationships: []
       }
+      job_openings: {
+        Row: {
+          created_at: string
+          department: string
+          description: string | null
+          experience: string
+          id: string
+          is_active: boolean | null
+          is_urgent: boolean | null
+          location: string
+          requirements: string | null
+          skills: string[]
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          department: string
+          description?: string | null
+          experience: string
+          id?: string
+          is_active?: boolean | null
+          is_urgent?: boolean | null
+          location: string
+          requirements?: string | null
+          skills?: string[]
+          title: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          department?: string
+          description?: string | null
+          experience?: string
+          id?: string
+          is_active?: boolean | null
+          is_urgent?: boolean | null
+          location?: string
+          requirements?: string | null
+          skills?: string[]
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       page_content: {
         Row: {
           button_link: string | null

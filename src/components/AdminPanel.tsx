@@ -31,6 +31,7 @@ import HeroBannerAdmin from './HeroBannerAdmin';
 import ContentManager from './ContentManager';
 import FooterManager from './FooterManager';
 import SiteSettingsManager from './SiteSettingsManager';
+import JobOpeningsManager from './JobOpeningsManager';
 
 interface ContactSubmission {
   id: string;
@@ -235,9 +236,9 @@ const AdminPanel = () => {
               <FileText className="h-4 w-4 mr-2" />
               Page Content
             </TabsTrigger>
-            <TabsTrigger value="footer" className="flex items-center">
-              <Globe className="h-4 w-4 mr-2" />
-              Footer
+            <TabsTrigger value="jobs" className="flex items-center">
+              <Building className="h-4 w-4 mr-2" />
+              Job Openings
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center">
               <Settings className="h-4 w-4 mr-2" />
@@ -425,8 +426,8 @@ const AdminPanel = () => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="footer">
-            <FooterManager />
+          <TabsContent value="jobs">
+            <JobOpeningsManager />
           </TabsContent>
         </Tabs>
       </div>

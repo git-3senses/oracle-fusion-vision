@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -15,53 +15,54 @@ import {
   GraduationCap,
   Heart
 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+
+interface JobOpening {
+  id: string;
+  title: string;
+  department: string;
+  location: string;
+  type: string;
+  experience: string;
+  skills: string[];
+  description: string | null;
+  requirements: string | null;
+  is_urgent: boolean;
+  is_active: boolean;
+}
 
 const Careers = () => {
+  const [openPositions, setOpenPositions] = useState<JobOpening[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchJobOpenings();
+  }, []);
+
+  const fetchJobOpenings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('job_openings')
+        .select('*')
+        .eq('is_active', true)
+        .order('is_urgent', { ascending: false })
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setOpenPositions(data || []);
+    } catch (error) {
+      console.error('Error fetching job openings:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
-  const openPositions = [
-    {
-      title: 'Senior Oracle ERP Consultant',
-      department: 'Consulting',
-      location: 'Hyderabad / Remote',
-      type: 'Full-time',
-      experience: '5+ years',
-      skills: ['Oracle ERP', 'Fusion Cloud', 'Implementation', 'Business Analysis'],
-      urgent: true
-    },
-    {
-      title: 'Oracle Fusion Technical Lead',
-      department: 'Technical',
-      location: 'Bangalore / Remote',
-      type: 'Full-time',
-      experience: '7+ years',
-      skills: ['Oracle Fusion', 'PL/SQL', 'Integration', 'Technical Architecture'],
-      urgent: false
-    },
-    {
-      title: 'AI Solutions Architect',
-      department: 'Innovation',
-      location: 'Remote',
-      type: 'Full-time',
-      experience: '6+ years',
-      skills: ['AI/ML', 'Oracle Cloud', 'Python', 'Data Analytics'],
-      urgent: true
-    },
-    {
-      title: 'Oracle Support Specialist',
-      department: 'Support',
-      location: 'Chennai / Remote',
-      type: 'Full-time',
-      experience: '3+ years',
-      skills: ['Oracle Support', 'Troubleshooting', 'Customer Service', 'Documentation'],
-      urgent: false
-    }
-  ];
 
   const benefits = [
     {
@@ -116,7 +117,7 @@ const Careers = () => {
   ];
 
   return (
-    <section id="careers" className="py-16 lg:py-24 bg-background">{/* Reduced padding */}
+    <section id="careers" className="py-16 lg:py-24 bg-background">
       <div className="container mx-auto px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-4xl mx-auto mb-20">
@@ -207,63 +208,82 @@ const Careers = () => {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-6">
-            {openPositions.map((position, index) => (
-              <div 
-                key={index} 
-                className="relative card-premium hover-lift animate-fade-in"
-                style={{animationDelay: `${index * 0.1}s`}}
-              >
-                {position.urgent && (
-                  <div className="absolute -top-3 left-6">
-                    <Badge className="bg-gradient-accent text-white font-semibold">
-                      Urgent Hiring
-                    </Badge>
-                  </div>
-                )}
+          {isLoading ? (
+            <div className="text-center py-8">
+              <div className="animate-pulse">Loading job openings...</div>
+            </div>
+          ) : openPositions.length > 0 ? (
+            <div className="grid lg:grid-cols-2 gap-6">
+              {openPositions.map((position, index) => (
+                <div 
+                  key={position.id} 
+                  className="relative card-premium hover-lift animate-fade-in"
+                  style={{animationDelay: `${index * 0.1}s`}}
+                >
+                  {position.is_urgent && (
+                    <div className="absolute -top-3 left-6">
+                      <Badge className="bg-gradient-accent text-white font-semibold">
+                        Urgent Hiring
+                      </Badge>
+                    </div>
+                  )}
 
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h4 className="text-xl font-bold mb-2">{position.title}</h4>
-                    <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                      <div className="flex items-center space-x-1">
-                        <Briefcase className="h-4 w-4" />
-                        <span>{position.department}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <MapPin className="h-4 w-4" />
-                        <span>{position.location}</span>
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h4 className="text-xl font-bold mb-2">{position.title}</h4>
+                      <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                        <div className="flex items-center space-x-1">
+                          <Briefcase className="h-4 w-4" />
+                          <span>{position.department}</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <MapPin className="h-4 w-4" />
+                          <span>{position.location}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center space-x-2">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">{position.type} • {position.experience}</span>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-2">
-                    {position.skills.map((skill, skillIndex) => (
-                      <Badge key={skillIndex} variant="secondary" className="text-xs">
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center space-x-2">
+                      <Clock className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm">{position.type} • {position.experience}</span>
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-2">
+                      {position.skills.map((skill, skillIndex) => (
+                        <Badge key={skillIndex} variant="secondary" className="text-xs">
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
 
-                <Button 
-                  variant="outline" 
-                  className="w-full group"
-                  onClick={() => scrollToSection('contact')}
-                >
-                  Apply Now
-                  <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </div>
-            ))}
-          </div>
+                    {position.description && (
+                      <p className="text-sm text-muted-foreground">
+                        {position.description}
+                      </p>
+                    )}
+                  </div>
+
+                  <Button 
+                    variant="outline" 
+                    className="w-full group"
+                    onClick={() => scrollToSection('contact')}
+                  >
+                    Apply Now
+                    <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No job openings available at the moment.</p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Please check back later or send us your resume for future opportunities.
+              </p>
+            </div>
+          )}
 
           <div className="text-center mt-12">
             <p className="text-muted-foreground mb-4">
