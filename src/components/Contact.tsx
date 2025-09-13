@@ -140,7 +140,7 @@ const Contact = () => {
 
   if (isSubmitted) {
     return (
-      <section id="contact" className="py-20 lg:py-32 bg-gradient-hero">
+      <section id="contact" className="py-16 lg:py-24 bg-gradient-hero">{/* Reduced padding */}
         <div className="container mx-auto px-6 lg:px-8">
           <div className="max-w-2xl mx-auto text-center text-white">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-success rounded-full mb-8">
@@ -168,7 +168,7 @@ const Contact = () => {
   }
 
   return (
-    <section id="contact" className="py-20 lg:py-32 bg-background">
+    <section id="contact" className="py-16 lg:py-24 bg-background">{/* Reduced padding */}
       <div className="container mx-auto px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">

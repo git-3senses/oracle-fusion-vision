@@ -81,7 +81,7 @@ const About = () => {
   };
 
   return (
-    <section id="about" className="py-20 lg:py-32 bg-background">
+    <section id="about" className="py-16 lg:py-24 bg-background">{/* Reduced padding */}
       <div className="container mx-auto px-6 lg:px-8" ref={aboutRef}>
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">

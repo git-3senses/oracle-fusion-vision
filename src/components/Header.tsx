@@ -104,6 +104,14 @@ const Header = () => {
           {/* CTA Button */}
           <div className="hidden lg:flex items-center space-x-4">
             <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => navigate('/auth')}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              Admin
+            </Button>
+            <Button 
               variant="premium" 
               size="lg" 
               className="hover-lift"
@@ -139,13 +147,24 @@ const Header = () => {
                       : 'text-foreground hover:text-primary'
                   }`}
                 >
-                  {item.name}
-                </button>
-              ))}
-              <Button 
-                variant="premium" 
-                size="lg" 
-                className="w-full hover-lift mt-4"
+                {item.name}
+              </button>
+            ))}
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => {
+                navigate('/auth');
+                setIsMenuOpen(false);
+              }}
+              className="w-full text-left justify-start mt-2"
+            >
+              Admin Login
+            </Button>
+            <Button 
+              variant="premium" 
+              size="lg" 
+              className="w-full hover-lift mt-4"
                 onClick={() => {
                   navigate('/contact');
                   setIsMenuOpen(false);
