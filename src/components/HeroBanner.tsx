@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Upload, Play, Pause } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import OptimizedVideo from './OptimizedVideo';
 import heroFallback from '@/assets/hero-modern.jpg';
 
 interface HeroBannerProps {
@@ -189,24 +190,26 @@ const HeroBanner: React.FC<HeroBannerProps> = ({
       {/* Background Media */}
       <div className="absolute inset-0">
         {mediaType === 'video' && mediaUrl ? (
-          <video
-            id="hero-video"
-            className="w-full h-full object-cover"
-            autoPlay
-            muted
-            loop
-            playsInline
-            onPlay={() => setIsVideoPlaying(true)}
-            onPause={() => setIsVideoPlaying(false)}
-          >
-            <source src={mediaUrl} type="video/mp4" />
-            <img src={heroFallback} alt="Fallback" className="w-full h-full object-cover" />
-          </video>
+          <OptimizedVideo
+            src={mediaUrl}
+            poster={heroFallback}
+            alt={`${pageName} hero background video`}
+            className="w-full h-full"
+            autoPlay={true}
+            muted={true}
+            loop={true}
+            controls={false}
+            lazyLoad={true}
+            onLoadStart={() => console.log('Video loading started')}
+            onLoadEnd={() => console.log('Video loaded')}
+            onError={(error) => console.error('Video error:', error)}
+          />
         ) : (
           <img 
             src={mediaUrl || heroFallback} 
             alt={`${pageName} hero background`}
             className="w-full h-full object-cover"
+            loading="eager"
           />
         )}
         

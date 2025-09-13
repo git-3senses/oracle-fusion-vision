@@ -5,9 +5,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Save, Upload, Eye, EyeOff, Palette } from 'lucide-react';
+import { Save, Upload, Eye, EyeOff, Palette, HardDrive } from 'lucide-react';
+import VideoUploadOptimizer from './VideoUploadOptimizer';
+import MediaStorageManager from './MediaStorageManager';
+import OptimizedVideo from './OptimizedVideo';
 
 interface HeroBannerData {
   id: string;
@@ -27,6 +31,8 @@ const HeroBannerAdmin: React.FC = () => {
   const [selectedBanner, setSelectedBanner] = useState<HeroBannerData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [previewMode, setPreviewMode] = useState(false);
   const { toast } = useToast();
 
@@ -95,42 +101,33 @@ const HeroBannerAdmin: React.FC = () => {
     }
   };
 
-  const handleMediaUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOptimizedUpload = async (file: File) => {
     if (!selectedBanner) return;
-    
-    const file = event.target.files?.[0];
-    if (!file) return;
+
+    setIsUploading(true);
+    setUploadProgress(0);
 
     const isVideo = file.type.startsWith('video/');
     const isImage = file.type.startsWith('image/');
-    
-    if (!isVideo && !isImage) {
-      toast({
-        title: "Invalid file type",
-        description: "Please select an image or video file",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (file.size > 50 * 1024 * 1024) {
-      toast({
-        title: "File too large",
-        description: "Please select a file under 50MB",
-        variant: "destructive"
-      });
-      return;
-    }
 
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${selectedBanner.page_name}-${Date.now()}.${fileExt}`;
       
+      // Simulate upload progress
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => Math.min(prev + 10, 90));
+      }, 200);
+
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('hero-media')
         .upload(fileName, file);
 
+      clearInterval(progressInterval);
+
       if (uploadError) throw uploadError;
+
+      setUploadProgress(95);
 
       const { data: { publicUrl } } = supabase.storage
         .from('hero-media')
@@ -152,9 +149,11 @@ const HeroBannerAdmin: React.FC = () => {
         media_url: publicUrl
       } : null);
 
+      setUploadProgress(100);
+
       toast({
         title: "Success",
-        description: "Media uploaded successfully",
+        description: "Media uploaded and optimized successfully",
       });
 
       fetchBanners();
@@ -165,6 +164,9 @@ const HeroBannerAdmin: React.FC = () => {
         description: "Failed to upload media",
         variant: "destructive"
       });
+    } finally {
+      setIsUploading(false);
+      setTimeout(() => setUploadProgress(0), 1000);
     }
   };
 
@@ -231,20 +233,20 @@ const HeroBannerAdmin: React.FC = () => {
             </div>
           </div>
 
-          {previewMode ? (
+            {previewMode ? (
             /* Preview Mode */
             <Card className="relative h-96 overflow-hidden">
               <div className="absolute inset-0">
                 {selectedBanner.media_type === 'video' && selectedBanner.media_url ? (
-                  <video
-                    className="w-full h-full object-cover"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                  >
-                    <source src={selectedBanner.media_url} type="video/mp4" />
-                  </video>
+                  <OptimizedVideo
+                    src={selectedBanner.media_url}
+                    className="w-full h-full"
+                    autoPlay={true}
+                    muted={true}
+                    loop={true}
+                    controls={false}
+                    lazyLoad={false}
+                  />
                 ) : selectedBanner.media_url ? (
                   <img 
                     src={selectedBanner.media_url} 
@@ -287,27 +289,147 @@ const HeroBannerAdmin: React.FC = () => {
             </Card>
           ) : (
             /* Edit Mode */
-            <div className="space-y-6">
-              {/* Media Upload */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Upload className="h-5 w-5 mr-2" />
-                    Background Media
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {selectedBanner.media_url && (
+            <Tabs defaultValue="content" className="space-y-6">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="content">Content</TabsTrigger>
+                <TabsTrigger value="media">Media</TabsTrigger>
+                <TabsTrigger value="storage">Storage</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="content" className="space-y-6">
+                {/* Content Settings */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Content</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label htmlFor="title">Title</Label>
+                      <Input
+                        id="title"
+                        value={selectedBanner.title}
+                        onChange={(e) => setSelectedBanner(prev => prev ? {
+                          ...prev,
+                          title: e.target.value
+                        } : null)}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="subtitle">Subtitle (optional)</Label>
+                      <Textarea
+                        id="subtitle"
+                        value={selectedBanner.subtitle || ''}
+                        onChange={(e) => setSelectedBanner(prev => prev ? {
+                          ...prev,
+                          subtitle: e.target.value || null
+                        } : null)}
+                        rows={3}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="cta-text">CTA Button Text</Label>
+                        <Input
+                          id="cta-text"
+                          value={selectedBanner.cta_text || ''}
+                          onChange={(e) => setSelectedBanner(prev => prev ? {
+                            ...prev,
+                            cta_text: e.target.value || null
+                          } : null)}
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="cta-link">CTA Link (e.g., #contact)</Label>
+                        <Input
+                          id="cta-link"
+                          value={selectedBanner.cta_link || ''}
+                          onChange={(e) => setSelectedBanner(prev => prev ? {
+                            ...prev,
+                            cta_link: e.target.value || null
+                          } : null)}
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Styling Settings */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Palette className="h-5 w-5 mr-2" />
+                      Styling
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="text-color">Text Color</Label>
+                        <div className="flex items-center space-x-2">
+                          <Input
+                            id="text-color"
+                            type="color"
+                            value={selectedBanner.text_color}
+                            onChange={(e) => setSelectedBanner(prev => prev ? {
+                              ...prev,
+                              text_color: e.target.value
+                            } : null)}
+                            className="w-16 h-10"
+                          />
+                          <Input
+                            value={selectedBanner.text_color}
+                            onChange={(e) => setSelectedBanner(prev => prev ? {
+                              ...prev,
+                              text_color: e.target.value
+                            } : null)}
+                            placeholder="#ffffff"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="overlay-opacity">Overlay Opacity: {(selectedBanner.overlay_opacity * 100).toFixed(0)}%</Label>
+                        <Input
+                          id="overlay-opacity"
+                          type="range"
+                          min="0"
+                          max="1"
+                          step="0.05"
+                          value={selectedBanner.overlay_opacity}
+                          onChange={(e) => setSelectedBanner(prev => prev ? {
+                            ...prev,
+                            overlay_opacity: parseFloat(e.target.value)
+                          } : null)}
+                          className="mt-2"
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="media" className="space-y-6">
+                {/* Current Media Preview */}
+                {selectedBanner.media_url && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Current Media</CardTitle>
+                    </CardHeader>
+                    <CardContent>
                       <div className="relative w-full h-48 rounded-lg overflow-hidden bg-muted">
                         {selectedBanner.media_type === 'video' ? (
-                          <video
-                            className="w-full h-full object-cover"
-                            muted
-                            controls
-                          >
-                            <source src={selectedBanner.media_url} type="video/mp4" />
-                          </video>
+                          <OptimizedVideo
+                            src={selectedBanner.media_url}
+                            className="w-full h-full"
+                            autoPlay={false}
+                            muted={true}
+                            loop={false}
+                            controls={true}
+                            lazyLoad={false}
+                          />
                         ) : (
                           <img 
                             src={selectedBanner.media_url} 
@@ -316,27 +438,41 @@ const HeroBannerAdmin: React.FC = () => {
                           />
                         )}
                       </div>
-                    )}
-                    
-                    <label className="flex items-center justify-center w-full p-4 border-2 border-dashed border-muted-foreground/25 rounded-lg cursor-pointer hover:border-muted-foreground/50 transition-colors">
-                      <div className="text-center">
-                        <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                        <p className="text-sm text-muted-foreground">
-                          Click to upload image or video (max 50MB)
-                        </p>
-                      </div>
-                      <input 
-                        type="file" 
-                        accept="image/*,video/*" 
-                        onChange={handleMediaUpload}
-                        className="hidden"
-                      />
-                    </label>
-                  </div>
-                </CardContent>
-              </Card>
+                    </CardContent>
+                  </Card>
+                )}
 
-              {/* Content Settings */}
+                {/* Enhanced Upload */}
+                <VideoUploadOptimizer
+                  onFileSelect={handleOptimizedUpload}
+                  uploadProgress={uploadProgress}
+                  isUploading={isUploading}
+                  maxSizeMB={50}
+                />
+              </TabsContent>
+
+              <TabsContent value="storage" className="space-y-6">
+                <MediaStorageManager
+                  bucketName="hero-media"
+                  onFileSelect={(file) => {
+                    const publicUrl = `https://invumsddzktxfvdfxscg.supabase.co/storage/v1/object/public/hero-media/${file.name}`;
+                    const isVideo = file.metadata?.mimetype?.startsWith('video/') || false;
+                    
+                    setSelectedBanner(prev => prev ? {
+                      ...prev,
+                      media_type: isVideo ? 'video' : 'image',
+                      media_url: publicUrl
+                    } : null);
+
+                    toast({
+                      title: "Media selected",
+                      description: "Media has been applied to the banner",
+                    });
+                  }}
+                />
+              </TabsContent>
+            </Tabs>
+          )}
               <Card>
                 <CardHeader>
                   <CardTitle>Content</CardTitle>
@@ -448,8 +584,6 @@ const HeroBannerAdmin: React.FC = () => {
                   </div>
                 </CardContent>
               </Card>
-            </div>
-          )}
         </div>
       )}
     </div>
