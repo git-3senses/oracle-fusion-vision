@@ -92,12 +92,12 @@ const DynamicFooter = () => {
 
   const getIconComponent = (iconName: string | null) => {
     switch (iconName) {
-      case 'mail': return <Mail className="h-5 w-5 text-accent" />;
-      case 'phone': return <Phone className="h-5 w-5 text-accent" />;
-      case 'map-pin': return <MapPin className="h-5 w-5 text-accent" />;
+      case 'mail': return <Mail className="h-5 w-5 text-white" />;
+      case 'phone': return <Phone className="h-5 w-5 text-white" />;
+      case 'map-pin': return <MapPin className="h-5 w-5 text-white" />;
       case 'linkedin': return <Linkedin className="h-5 w-5" />;
       case 'facebook': return <Facebook className="h-5 w-5" />;
-      case 'globe': return <Globe className="h-5 w-5 text-accent" />;
+      case 'globe': return <Globe className="h-5 w-5 text-white" />;
       default: return null;
     }
   };

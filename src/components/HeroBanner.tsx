@@ -152,6 +152,12 @@ const HeroBanner: React.FC<HeroBannerProps> = ({
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       }
+    } else if (sectionId) {
+      // If it's just a section name without #, add it
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
 
