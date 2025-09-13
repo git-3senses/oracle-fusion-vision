@@ -308,23 +308,14 @@ const Careers = () => {
             Join our mission to transform businesses through innovative Oracle solutions. 
             Let's build the future together.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button 
-              variant="accent" 
-              size="xl"
-              onClick={() => scrollToSection('contact')}
-              className="hover-lift"
-            >
-              Start Your Journey
-            </Button>
-            <Button 
-              variant="outline" 
-              size="xl"
-              className="bg-white/10 border-white/30 text-white hover:bg-white/20"
-            >
-              Learn About Our Culture
-            </Button>
-          </div>
+          <Button 
+            variant="accent" 
+            size="xl"
+            onClick={() => scrollToSection('contact')}
+            className="hover-lift"
+          >
+            Start Applying
+          </Button>
         </div>
       </div>
     </section>

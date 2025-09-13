@@ -4,8 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { 
   Database, 
   Settings, 
-  Cpu, 
-  Shield, 
+  Brain, 
+  Headphones, 
   TrendingUp, 
   Users,
   ArrowRight,
@@ -40,7 +40,7 @@ const Services = () => {
       popular: true
     },
     {
-      icon: Cpu,
+      icon: Brain,
       title: 'AI-Enhanced Solutions',
       description: 'Leverage artificial intelligence to automate processes and enhance Oracle system capabilities.',
       features: [
@@ -66,7 +66,7 @@ const Services = () => {
       popular: false
     },
     {
-      icon: Shield,
+      icon: Headphones,
       title: 'Managed Support',
       description: '24/7 ongoing support and maintenance to keep your Oracle systems running smoothly.',
       features: [
