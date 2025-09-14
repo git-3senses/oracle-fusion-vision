@@ -16,12 +16,12 @@ const ServicesPage = () => {
       />
       <Header />
       <main>
-        <HeroBanner 
+        <HeroBanner
           pageName="services"
           defaultTitle="Comprehensive Oracle Solutions"
           defaultSubtitle="From implementation to optimization, we provide end-to-end Oracle consulting services that transform your business operations."
           defaultCtaText="View Services"
-          defaultCtaLink="services"
+          defaultCtaLink="#services"
         />
         <Services />
       </main>

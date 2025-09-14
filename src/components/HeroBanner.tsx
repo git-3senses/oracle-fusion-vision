@@ -261,17 +261,27 @@ const HeroBanner: React.FC<HeroBannerProps> = ({
   };
 
   const scrollToSection = (sectionId: string) => {
+    console.log('Home page - Scrolling to section:', sectionId);
+
+    let targetId = sectionId;
     if (sectionId.startsWith('#')) {
-      const element = document.getElementById(sectionId.substring(1));
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    } else if (sectionId) {
-      // If it's just a section name without #, add it
-      const element = document.getElementById(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+      targetId = sectionId.substring(1);
+    }
+
+    const element = document.getElementById(targetId);
+    console.log('Home page - Found element:', element);
+
+    if (element) {
+      // Account for fixed header height
+      const headerHeight = 80; // Approximate header height
+      const elementPosition = element.offsetTop - headerHeight;
+
+      window.scrollTo({
+        top: elementPosition,
+        behavior: 'smooth'
+      });
+    } else {
+      console.log('Home page - Element not found for ID:', targetId);
     }
   };
 

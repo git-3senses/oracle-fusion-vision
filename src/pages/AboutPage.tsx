@@ -16,12 +16,12 @@ const AboutPage = () => {
       />
       <Header />
       <main>
-        <HeroBanner 
+        <HeroBanner
           pageName="about"
           defaultTitle="About Vijay Apps Consultants"
           defaultSubtitle="Your trusted Oracle transformation partner with 15+ years of expertise helping global organizations achieve digital transformation."
           defaultCtaText="Explore Our Story"
-          defaultCtaLink="about"
+          defaultCtaLink="#about"
         />
         <About />
       </main>
