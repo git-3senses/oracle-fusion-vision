@@ -12,13 +12,19 @@ const Hero = () => {
   };
 
   return (
-    <section id="home" className="relative min-h-[70vh] sm:min-h-screen flex items-center overflow-hidden">
-      {/* Background Image with Overlay */}
+    <section id="home" className="relative h-screen flex items-center overflow-hidden">
+      {/* Background Image with Overlay - Optimized for CLS */}
       <div className="absolute inset-0">
         <img 
           src={heroImage} 
           alt="Enterprise Oracle Consulting" 
           className="w-full h-full object-cover"
+          loading="eager"
+          decoding="async"
+          style={{
+            aspectRatio: '16/9',
+            backgroundColor: '#1a1a1a'
+          }}
         />
         <div className="absolute inset-0 bg-gradient-hero opacity-90" />
         <div className="absolute inset-0 bg-black/20" />

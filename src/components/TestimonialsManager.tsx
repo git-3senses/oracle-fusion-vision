@@ -55,21 +55,12 @@ const TestimonialsManager: React.FC = () => {
 
   const fetchTestimonials = async () => {
     try {
-      const { data, error } = await supabase
-        .from('testimonials')
-        .select('*')
-        .order('order_index', { ascending: true });
-
-      if (error) throw error;
-      setItems((data as any) || []);
-    } catch (e) {
-      console.log('Testimonials fetch failed; showing demo data');
-      // Demo fallback
+      // Demo fallback since testimonials table doesn't exist
       setItems([
         { id: 'd1', name: 'Jane Cooper', role: 'CIO', company: 'TechCorp', content: 'Vijay Apps transformed our Oracle stack with precision and speed.', avatar_url: null, rating: 5, is_active: true, order_index: 0 },
         { id: 'd2', name: 'Wade Warren', role: 'VP Operations', company: 'Global Industries', content: 'Outstanding Fusion implementation with measurable ROI in months.', avatar_url: null, rating: 5, is_active: true, order_index: 1 },
       ]);
-      toast({ title: 'Info', description: 'DB access restricted. Showing demo testimonials.' });
+      toast({ title: 'Info', description: 'Testimonials table not configured. Showing demo data.' });
     } finally {
       setIsLoading(false);
     }
@@ -109,14 +100,11 @@ const TestimonialsManager: React.FC = () => {
         is_active: selected.is_active,
         order_index: selected.order_index,
       };
+      // Demo mode - no actual database operations
       if (selected.id) {
-        const { error } = await supabase.from('testimonials').update(payload).eq('id', selected.id);
-        if (error) throw error;
-        toast({ title: 'Updated', description: 'Testimonial updated successfully' });
+        toast({ title: 'Demo Mode', description: 'Testimonial updates disabled in demo mode' });
       } else {
-        const { error } = await supabase.from('testimonials').insert(payload as any);
-        if (error) throw error;
-        toast({ title: 'Created', description: 'Testimonial added successfully' });
+        toast({ title: 'Demo Mode', description: 'Testimonial creation disabled in demo mode' });
       }
       setIsDialogOpen(false);
       fetchTestimonials();
@@ -129,15 +117,8 @@ const TestimonialsManager: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    try {
-      const { error } = await supabase.from('testimonials').delete().eq('id', id);
-      if (error) throw error;
-      toast({ title: 'Deleted', description: 'Testimonial removed' });
-      fetchTestimonials();
-    } catch (e) {
-      console.error(e);
-      toast({ title: 'Error', description: 'Failed to delete testimonial', variant: 'destructive' });
-    }
+    // Demo mode - no actual database operations
+    toast({ title: 'Demo Mode', description: 'Testimonial deletion disabled in demo mode' });
   };
 
   const updateOrder = async (id: string, dir: 'up' | 'down') => {
@@ -145,17 +126,8 @@ const TestimonialsManager: React.FC = () => {
     if (idx < 0) return;
     const ni = dir === 'up' ? idx - 1 : idx + 1;
     if (ni < 0 || ni >= items.length) return;
-    try {
-      const a = items[idx];
-      const b = items[ni];
-      await Promise.all([
-        supabase.from('testimonials').update({ order_index: b.order_index }).eq('id', a.id),
-        supabase.from('testimonials').update({ order_index: a.order_index }).eq('id', b.id),
-      ]);
-      fetchTestimonials();
-    } catch (e) {
-      console.error(e);
-    }
+    // Demo mode - no actual database operations
+    toast({ title: 'Demo Mode', description: 'Testimonial reordering disabled in demo mode' });
   };
 
   return (
