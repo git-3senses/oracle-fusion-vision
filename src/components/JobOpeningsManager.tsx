@@ -204,6 +204,36 @@ const JobOpeningsManager: React.FC = () => {
   };
 
   const handleSave = async () => {
+    // Check authentication before attempting save
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to save job openings.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validate form data
+    if (!formData.title.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Job title is required.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!formData.department.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Department is required.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsSaving(true);
     try {
       const skillsArray = formData.skills
@@ -224,6 +254,8 @@ const JobOpeningsManager: React.FC = () => {
         is_active: formData.is_active
       };
 
+      let dbSuccess = false;
+
       if (selectedJob) {
         // Update existing job
         const { error } = await supabase
@@ -231,8 +263,12 @@ const JobOpeningsManager: React.FC = () => {
           .update(jobData)
           .eq('id', selectedJob.id);
 
-        if (error) throw error;
+        if (error) {
+          console.warn('Database update failed, will show error but continue with local fallback');
+          throw error;
+        }
 
+        dbSuccess = true;
         toast({
           title: "Success",
           description: "Job opening updated successfully"
@@ -243,8 +279,12 @@ const JobOpeningsManager: React.FC = () => {
           .from('job_openings')
           .insert([jobData]);
 
-        if (error) throw error;
+        if (error) {
+          console.warn('Database insert failed, will show error but continue with local fallback');
+          throw error;
+        }
 
+        dbSuccess = true;
         toast({
           title: "Success",
           description: "Job opening created successfully"
@@ -253,11 +293,37 @@ const JobOpeningsManager: React.FC = () => {
 
       setIsDialogOpen(false);
       fetchJobOpenings();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving job opening:', error);
+      console.error('Error details:', {
+        code: error?.code,
+        message: error?.message,
+        details: error?.details,
+        hint: error?.hint,
+        statusCode: error?.statusCode
+      });
+
+      let errorMessage = "Failed to save job opening";
+
+      if (error?.code === '42501' || error?.message?.includes('permission')) {
+        errorMessage = "Permission denied. You may not have access to modify job openings.";
+      } else if (error?.code === '42P01') {
+        errorMessage = "The job_openings table doesn't exist in the database. Please contact support.";
+      } else if (error?.code === '23505') {
+        errorMessage = "A job opening with this title already exists.";
+      } else if (error?.code === 'PGRST301') {
+        errorMessage = "Database connection issue. Please try again.";
+      } else if (error?.message?.includes('JWT')) {
+        errorMessage = "Your session has expired. Please log in again.";
+      } else if (error?.message?.includes('RLS')) {
+        errorMessage = "Database security policies prevent this action. Contact support.";
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+
       toast({
-        title: "Error",
-        description: "Failed to save job opening",
+        title: "Save Failed",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {

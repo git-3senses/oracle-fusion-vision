@@ -12,7 +12,10 @@ const NotFound = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.error("404 Error: User attempted to access non-existent route:", location.pathname);
+    // Only log 404 errors for actual 404s, not base path redirects
+    if (!location.pathname.includes('/oracle-fusion-vision/')) {
+      console.error("404 Error: User attempted to access non-existent route:", location.pathname);
+    }
   }, [location.pathname]);
 
   const goBack = () => {

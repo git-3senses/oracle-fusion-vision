@@ -120,6 +120,17 @@ const SiteSettingsManager: React.FC = () => {
   };
 
   const handleSaveSettings = async () => {
+    // Check authentication before attempting save
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to save changes.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
       setIsSaving(true);
       toast({

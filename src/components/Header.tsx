@@ -169,7 +169,9 @@ const Header = memo(() => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden p-2 rounded-lg hover:bg-muted transition-all duration-200 hover-scale"
+            className={`lg:hidden p-2 rounded-lg hover:bg-muted transition-all duration-200 hover-scale ${
+              solid ? 'text-foreground' : 'text-white'
+            }`}
             aria-expanded={isMenuOpen}
             aria-controls="mobile-menu"
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}

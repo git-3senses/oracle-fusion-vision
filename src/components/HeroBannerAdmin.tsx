@@ -94,6 +94,17 @@ const HeroBannerAdmin: React.FC = () => {
   const handleSave = async () => {
     if (!selectedBanner) return;
 
+    // Check authentication before attempting save
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to save changes.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsSaving(true);
     try {
       const { error } = await supabase
@@ -155,11 +166,22 @@ const HeroBannerAdmin: React.FC = () => {
       } catch {}
 
       fetchBanners();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving banner:', error);
+
+      let errorMessage = "Failed to save hero banner";
+
+      if (error?.code === '42501' || error?.message?.includes('permission')) {
+        errorMessage = "Permission denied. Please check your authentication or contact support.";
+      } else if (error?.code === 'PGRST301') {
+        errorMessage = "Database connection issue. Please try again.";
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+
       toast({
-        title: "Error",
-        description: "Failed to save hero banner",
+        title: "Save Error",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
