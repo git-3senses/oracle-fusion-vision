@@ -357,9 +357,9 @@ const HeroBanner: React.FC<HeroBannerProps> = ({
           </h1>
           
           {subtitle && (
-            <p 
-              className="text-lg lg:text-xl max-w-2xl mx-auto mb-8 leading-relaxed animate-slide-up"
-              style={{ color: textColor, opacity: 0.9, animationDelay: '0.2s' }}
+            <p
+              className="text-lg lg:text-xl max-w-2xl mx-auto mb-8 leading-relaxed animate-slide-up font-light text-white/80"
+              style={{ animationDelay: '0.2s' }}
             >
               {subtitle}
             </p>
