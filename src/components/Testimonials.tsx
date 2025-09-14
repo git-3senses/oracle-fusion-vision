@@ -75,31 +75,8 @@ const Testimonials = () => {
   const [items, setItems] = useState<Testimonial[]>([]);
 
   useEffect(() => {
-    const fetchTestimonials = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('testimonials')
-          .select('id, name, role, company, content, rating')
-          .eq('is_active', true)
-          .order('order_index', { ascending: true })
-          .limit(3);
-        if (error) throw error;
-        const mapped = (data || []).map((row: any) => ({
-          id: row.id,
-          name: row.name,
-          position: row.role || '',
-          company: row.company || '',
-          content: row.content,
-          rating: row.rating ?? 5,
-          project: ''
-        }));
-        if (mapped.length > 0) setItems(mapped as Testimonial[]);
-        else setItems(demo.slice(0, 3));
-      } catch {
-        setItems(demo.slice(0, 3));
-      }
-    };
-    fetchTestimonials();
+    // Use demo data since testimonials table doesn't exist
+    setItems(demo.slice(0, 3));
   }, []);
 
   const renderStars = (rating: number) => {
