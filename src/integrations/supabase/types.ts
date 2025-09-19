@@ -335,6 +335,63 @@ export type Database = {
         }
         Relationships: []
       }
+      resume_submissions: {
+        Row: {
+          availability: string | null
+          cover_letter: string
+          created_at: string
+          current_location: string | null
+          current_role: string | null
+          email: string
+          expected_salary: string | null
+          experience_years: string
+          full_name: string
+          id: string
+          oracle_skills: string
+          phone: string
+          preferred_position: string | null
+          resume_url: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          availability?: string | null
+          cover_letter: string
+          created_at?: string
+          current_location?: string | null
+          current_role?: string | null
+          email: string
+          expected_salary?: string | null
+          experience_years: string
+          full_name: string
+          id?: string
+          oracle_skills: string
+          phone: string
+          preferred_position?: string | null
+          resume_url?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          availability?: string | null
+          cover_letter?: string
+          created_at?: string
+          current_location?: string | null
+          current_role?: string | null
+          email?: string
+          expected_salary?: string | null
+          experience_years?: string
+          full_name?: string
+          id?: string
+          oracle_skills?: string
+          phone?: string
+          preferred_position?: string | null
+          resume_url?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           created_at: string

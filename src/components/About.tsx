@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useNavigate } from 'react-router-dom';
 import { 
   Award, 
   Users, 
@@ -15,6 +16,8 @@ import {
 import teamImage from '@/assets/team-modern.jpg';
 
 const About = () => {
+  const navigate = useNavigate();
+
   const [counters, setCounters] = useState({
     experience: 0,
     clients: 0,
@@ -117,10 +120,10 @@ const About = () => {
             {/* Key Points */}
             <div className="space-y-4">
               {[
-                'Oracle Certified Partners with proven track record',
+                'Oracle Certified Experts with proven track record',
                 'AI-enhanced implementations for future-ready solutions',
                 'End-to-end support from planning to go-live and beyond',
-                'Global delivery model with 24/7 support capabilities'
+                'Global delivery model with support capabilities'
               ].map((point, index) => (
                 <div key={index} className="flex items-start space-x-3">
                   <CheckCircle className="h-6 w-6 text-success flex-shrink-0 mt-0.5" />
@@ -131,21 +134,21 @@ const About = () => {
 
             {/* Video CTA */}
             <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 pt-4 w-full sm:w-auto">
-              <Button 
-                variant="premium" 
+              <Button
+                variant="premium"
                 size="lg"
-                onClick={() => scrollToSection('services')}
+                onClick={() => navigate('/services')}
                 className="hover-lift w-full sm:w-auto"
               >
                 Explore Our Services
               </Button>
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="lg"
+                onClick={() => scrollToSection('about-stats')}
                 className="text-primary hover:text-primary-dark w-full sm:w-auto"
               >
-                <Play className="h-5 w-5 mr-2" />
-                Watch Our Story
+                Learn More
               </Button>
             </div>
           </div>
@@ -167,7 +170,7 @@ const About = () => {
                 </div>
                 <div>
                   <div className="font-semibold text-sm">Oracle Certified</div>
-                  <div className="text-xs text-muted-foreground">Gold Partner</div>
+                  <div className="text-xs text-muted-foreground">Experts</div>
                 </div>
               </div>
             </div>
@@ -178,7 +181,7 @@ const About = () => {
                   <TrendingUp className="h-5 w-5 text-accent-foreground" />
                 </div>
                 <div>
-                  <div className="font-semibold text-sm">99% Success</div>
+                  <div className="font-semibold text-sm">100% Success</div>
                   <div className="text-xs text-muted-foreground">Rate</div>
                 </div>
               </div>
@@ -187,7 +190,7 @@ const About = () => {
         </div>
 
         {/* Animated Counters */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
+        <div id="about-stats" className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
           {[
             { key: 'experience', label: 'Years Experience', icon: Target, suffix: '+' },
             { key: 'clients', label: 'Happy Clients', icon: Users, suffix: '+' },
@@ -224,7 +227,7 @@ const About = () => {
             {
               icon: Globe,
               title: 'Global Delivery',
-              description: '24/7 support with teams across multiple time zones ensuring seamless project execution.',
+              description: 'Support with teams across multiple time zones ensuring seamless project execution.',
               color: 'accent'
             }
           ].map((area, index) => (

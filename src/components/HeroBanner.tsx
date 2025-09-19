@@ -300,8 +300,8 @@ const HeroBanner: React.FC<HeroBannerProps> = ({
   const mediaType = bannerData?.media_type || 'image';
   const overlayOpacity = (bannerData?.overlay_opacity ?? defaultOverlay);
   const textColor = bannerData?.text_color || defaultTextColor;
-  const ctaText = bannerData?.cta_text ?? defaultCtaText ?? undefined;
-  const ctaLink = bannerData?.cta_link ?? defaultCtaLink ?? undefined;
+  const ctaText = defaultCtaText ?? bannerData?.cta_text ?? undefined;
+  const ctaLink = defaultCtaLink ?? bannerData?.cta_link ?? undefined;
 
   return (
     <section className="relative min-h-[70vh] sm:min-h-screen flex items-center justify-center overflow-hidden">

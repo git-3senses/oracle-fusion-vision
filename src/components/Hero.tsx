@@ -36,7 +36,7 @@ const Hero = () => {
           {/* Hero Badge */}
           <div className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 mb-8 animate-fade-in">
             <Shield className="h-4 w-4 mr-2" />
-            <span className="text-sm font-medium">Oracle Certified Partners</span>
+            <span className="text-sm font-medium">Oracle Certified Experts</span>
           </div>
 
           {/* Main Headline */}
@@ -65,14 +65,14 @@ const Hero = () => {
               <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
             
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="xl"
               className="bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
-              onClick={() => scrollToSection('about')}
+              onClick={() => scrollToSection('services-cards')}
             >
-              <Play className="h-5 w-5 mr-2" />
-              Watch Our Story
+              Explore Our Services
+              <ArrowRight className="h-5 w-5 ml-2" />
             </Button>
           </div>
 
@@ -106,7 +106,7 @@ const Hero = () => {
               <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-3 shadow-lg backdrop-blur-sm border border-white/20">
                 <Shield className="h-6 w-6" />
               </div>
-              <div className="text-2xl font-bold">99%</div>
+              <div className="text-2xl font-bold">100%</div>
               <div className="text-sm text-white/80">Success Rate</div>
             </div>
           </div>

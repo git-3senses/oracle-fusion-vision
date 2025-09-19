@@ -10,7 +10,7 @@ const ServicesPage = () => {
     <div className="min-h-screen bg-background">
       <SEOHead
         title="Oracle Consulting Services - ERP Implementation & Support"
-        description="Comprehensive Oracle services: ERP implementation, AI-enhanced solutions, system customization, and 24/7 managed support. Transform your business with proven Oracle expertise."
+        description="Comprehensive Oracle services: ERP implementation, AI-enhanced solutions, system customization, and managed support. Transform your business with proven Oracle expertise."
         keywords="Oracle Services, Oracle ERP Implementation, Oracle Support, Oracle Customization, Oracle AI Solutions, Oracle Cloud Migration, Oracle Consulting Services"
         canonicalUrl={typeof window !== 'undefined' ? `${window.location.origin}/services` : ''}
       />
@@ -20,7 +20,7 @@ const ServicesPage = () => {
           pageName="services"
           defaultTitle="Comprehensive Oracle Solutions"
           defaultSubtitle="From implementation to optimization, we provide end-to-end Oracle consulting services that transform your business operations."
-          defaultCtaText="View Services"
+          defaultCtaText="Explore Services"
           defaultCtaLink="#services"
         />
         <Services />

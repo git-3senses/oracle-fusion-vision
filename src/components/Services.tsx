@@ -1,6 +1,7 @@
 import React, { memo, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useNavigate } from 'react-router-dom';
 import {
   Database,
   Settings,
@@ -62,7 +63,7 @@ const CORE_SERVICES = [
     {
       icon: Shield,
       title: 'Managed Support',
-      description: '24/7 ongoing support and maintenance to keep your Oracle systems running smoothly.',
+      description: 'Ongoing support and maintenance to keep your Oracle systems running smoothly.',
       features: [
         'Proactive system monitoring',
         'Performance optimization',
@@ -108,6 +109,8 @@ const SPECIALIZATIONS = [
   ];
 
 const Services = memo(() => {
+  const navigate = useNavigate();
+
   const scrollToSection = useCallback((sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -134,7 +137,7 @@ const Services = memo(() => {
         </div>
 
         {/* Core Services Grid */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-20">
+        <div id="services-cards" className="grid lg:grid-cols-2 gap-8 mb-20">
           {CORE_SERVICES.map((service, index) => (
             <div 
               key={index} 
@@ -163,7 +166,7 @@ const Services = memo(() => {
                 </div>
               </div>
 
-              <div className="space-y-3 mb-6">
+              <div className="space-y-3">
                 {service.features.map((feature, featureIndex) => (
                   <div key={featureIndex} className="flex items-center space-x-3">
                     <CheckCircle className="h-5 w-5 text-success flex-shrink-0" />
@@ -171,15 +174,6 @@ const Services = memo(() => {
                   </div>
                 ))}
               </div>
-
-              <Button 
-                variant="outline" 
-                className="w-full group"
-                onClick={() => scrollToSection('contact')}
-              >
-                Learn More
-                <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
             </div>
           ))}
         </div>
@@ -221,10 +215,10 @@ const Services = memo(() => {
                 ))}
               </div>
 
-              <Button 
-                variant="premium" 
+              <Button
+                variant="premium"
                 size="lg"
-                onClick={() => scrollToSection('contact')}
+                onClick={() => navigate('/contact')}
                 className="hover-lift"
               >
                 Discuss Your Requirements
@@ -244,7 +238,7 @@ const Services = memo(() => {
               {/* Floating Success Metrics */}
               <div className="absolute top-6 left-6 bg-card rounded-xl p-4 shadow-lg border border-border animate-fade-in" style={{animationDelay: '1s'}}>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">99%</div>
+                  <div className="text-2xl font-bold text-primary">100%</div>
                   <div className="text-xs text-muted-foreground">Implementation Success</div>
                 </div>
               </div>
@@ -269,10 +263,10 @@ const Services = memo(() => {
             and unlock new opportunities for growth.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button 
-              variant="accent" 
+            <Button
+              variant="accent"
               size="xl"
-              onClick={() => scrollToSection('contact')}
+              onClick={() => navigate('/contact')}
               className="hover-lift"
             >
               Schedule Free Consultation

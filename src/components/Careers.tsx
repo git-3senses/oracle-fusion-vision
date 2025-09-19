@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Users, 
-  TrendingUp, 
-  Globe, 
+import {
+  Users,
+  TrendingUp,
+  Globe,
   Award,
   MapPin,
   Clock,
@@ -16,6 +16,7 @@ import {
   Heart
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 
 interface JobOpening {
   id: string;
@@ -34,6 +35,7 @@ interface JobOpening {
 const Careers = () => {
   const [openPositions, setOpenPositions] = useState<JobOpening[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchJobOpenings();
@@ -213,20 +215,6 @@ const Careers = () => {
               ))}
             </div>
 
-            <div className="flex items-center space-x-8 pt-4">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">50+</div>
-                <div className="text-sm text-muted-foreground">Team Members</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">15+</div>
-                <div className="text-sm text-muted-foreground">Countries</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">98%</div>
-                <div className="text-sm text-muted-foreground">Employee Satisfaction</div>
-              </div>
-            </div>
           </div>
 
           {/* Benefits Grid */}
@@ -317,10 +305,10 @@ const Careers = () => {
                     )}
                   </div>
 
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full group"
-                    onClick={() => scrollToSection('contact')}
+                    onClick={() => navigate('/submit-resume')}
                   >
                     Apply Now
                     <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -341,10 +329,10 @@ const Careers = () => {
             <p className="text-muted-foreground mb-4">
               Don't see a perfect match? We're always looking for talented professionals.
             </p>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="lg"
-              onClick={() => scrollToSection('contact')}
+              onClick={() => navigate('/submit-resume')}
             >
               Send Us Your Resume
             </Button>
@@ -360,11 +348,11 @@ const Careers = () => {
             Join our mission to transform businesses through innovative Oracle solutions. 
             Let's build the future together.
           </p>
-          <Button 
-            variant="accent" 
+          <Button
+            variant="accent"
             size="xl"
-            onClick={() => scrollToSection('contact')}
             className="hover-lift"
+            onClick={() => navigate('/jobs')}
           >
             Start Applying
           </Button>

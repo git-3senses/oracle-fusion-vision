@@ -249,11 +249,11 @@ const Contact = () => {
                   vijay_adina@vijayappsconsultants.com
                 </a>
                 <a
-                  href="tel:+1234567890"
+                  href="tel:+14408536416"
                   className="flex items-center text-white hover:text-accent transition-colors"
                 >
                   <Phone className="h-5 w-5 mr-2" />
-                  +1 (234) 567-8900
+                  +1 (440) 853-6416
                 </a>
               </div>
             </div>
@@ -313,8 +313,8 @@ const Contact = () => {
                     <p className="text-muted-foreground text-sm mb-2">
                       Speak with our experts
                     </p>
-                    <a href="tel:+916303526930" className="text-primary hover:text-primary-dark font-medium">
-                      +91 630 352 6930
+                    <a href="tel:+14408536416" className="text-primary hover:text-primary-dark font-medium">
+                      +1 (440) 853-6416
                     </a>
                   </div>
                 </div>
@@ -330,7 +330,7 @@ const Contact = () => {
                     <h3 className="font-semibold mb-1">Why Choose Us</h3>
                     <ul className="text-sm text-muted-foreground space-y-2 mt-2">
                       <li className="flex items-center"><Calendar className="h-4 w-4 text-primary mr-2" /> Free initial consultation</li>
-                      <li className="flex items-center"><Globe className="h-4 w-4 text-primary mr-2" /> Global 24/7 support</li>
+                      <li className="flex items-center"><Globe className="h-4 w-4 text-primary mr-2" /> Global support</li>
                       <li className="flex items-center"><Award className="h-4 w-4 text-primary mr-2" /> Oracle certified experts</li>
                     </ul>
                   </div>

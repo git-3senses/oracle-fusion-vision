@@ -62,7 +62,7 @@ const Footer = () => {
                 </div>
                 <div className="flex items-center space-x-3">
                   <Globe className="h-5 w-5 text-accent" />
-                  <span className="text-white/80">Global 24/7 Support</span>
+                  <span className="text-white/80">Global Support</span>
                 </div>
               </div>
 
@@ -143,7 +143,7 @@ const Footer = () => {
                 © 2025 Vijay Apps Consultants. All rights reserved.
               </p>
               <p className="text-white/60 text-sm">
-                Oracle Certified Gold Partner | ISO 27001 Certified
+                Oracle Certified Experts | ISO 27001 Certified
               </p>
             </div>
 

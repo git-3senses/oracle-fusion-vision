@@ -100,7 +100,7 @@ const PrivacyPage = () => {
                 <div className="bg-muted/50 rounded-lg p-6 mt-4">
                   <p className="font-semibold">Vijay Apps Consultants</p>
                   <p className="text-muted-foreground">Email: vijay_adina@vijayappsconsultants.com</p>
-                  <p className="text-muted-foreground">Phone: +91 6303526930</p>
+                  <p className="text-muted-foreground">Phone: +1 (440) 853-6416</p>
                   <p className="text-muted-foreground">Address: Flat#2201, Block 6, My Home Avatar, Narsingi, Hyderabad-500089</p>
                 </div>
               </section>

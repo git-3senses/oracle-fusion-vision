@@ -20,7 +20,7 @@ const AboutPage = () => {
           pageName="about"
           defaultTitle="About Vijay Apps Consultants"
           defaultSubtitle="Your trusted Oracle transformation partner with 15+ years of expertise helping global organizations achieve digital transformation."
-          defaultCtaText="Explore Our Story"
+          defaultCtaText="Learn More"
           defaultCtaLink="#about"
         />
         <About />

@@ -18,6 +18,8 @@ const AdminPanel = lazy(() => import("./components/AdminPanel"));
 const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
 const TermsPage = lazy(() => import("./pages/TermsPage"));
 const CaseStudiesPage = lazy(() => import("./pages/CaseStudiesPage"));
+const SubmitResumePage = lazy(() => import("./pages/SubmitResumePage"));
+const JobsPage = lazy(() => import("./pages/JobsPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -55,6 +57,8 @@ const router = createBrowserRouter([
       { path: "/privacy", element: <SuspenseWrapper><PrivacyPage /></SuspenseWrapper> },
       { path: "/terms", element: <SuspenseWrapper><TermsPage /></SuspenseWrapper> },
       { path: "/case-studies", element: <SuspenseWrapper><CaseStudiesPage /></SuspenseWrapper> },
+      { path: "/submit-resume", element: <SuspenseWrapper><SubmitResumePage /></SuspenseWrapper> },
+      { path: "/jobs", element: <SuspenseWrapper><JobsPage /></SuspenseWrapper> },
       { path: "*", element: <SuspenseWrapper><NotFound /></SuspenseWrapper> },
     ],
   },
