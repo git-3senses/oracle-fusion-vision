@@ -3,7 +3,7 @@ import Header from '@/components/Header';
 import HeroBanner from '@/components/HeroBanner';
 import About from '@/components/About';
 import Services from '@/components/Services';
-import Testimonials from '@/components/Testimonials';
+import ConditionalTestimonials from '@/components/ConditionalTestimonials';
 import Careers from '@/components/Careers';
 import Contact from '@/components/Contact';
 import DynamicFooter from '@/components/DynamicFooter';
@@ -27,7 +27,7 @@ const Index = () => {
         />
         <About />
         <Services />
-        <Testimonials />
+        <ConditionalTestimonials />
         <Careers />
         <Contact />
       </main>

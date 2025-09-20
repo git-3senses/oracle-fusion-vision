@@ -7,6 +7,8 @@ export function saveSiteSettings(map: SettingsMap) {
   try {
     localStorage.setItem(KEY, JSON.stringify(map));
     localStorage.setItem(EV_KEY, String(Date.now()));
+    // Dispatch custom event for same-tab updates
+    window.dispatchEvent(new CustomEvent('site-settings-updated'));
   } catch {}
 }
 
@@ -21,10 +23,17 @@ export function loadSiteSettings(): SettingsMap | null {
 }
 
 export function onSiteSettingsUpdated(cb: () => void) {
-  const handler = (e: StorageEvent) => {
+  const storageHandler = (e: StorageEvent) => {
     if (e.key === EV_KEY) cb();
   };
-  window.addEventListener('storage', handler);
-  return () => window.removeEventListener('storage', handler);
+  const customHandler = () => cb();
+
+  window.addEventListener('storage', storageHandler);
+  window.addEventListener('site-settings-updated', customHandler);
+
+  return () => {
+    window.removeEventListener('storage', storageHandler);
+    window.removeEventListener('site-settings-updated', customHandler);
+  };
 }
 

@@ -4,7 +4,7 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 
 export default defineConfig(({ mode }) => ({
-  // On Lovable (and most hosts) the app is served from domain root.
+  // App is served from domain root.
   // Using a subpath base breaks asset URLs and causes MIME/type 404 issues.
   base: process.env.VITE_BASE ?? '/',
   server: {

@@ -60,6 +60,17 @@ const SiteSettingsManager: React.FC = () => {
         return acc;
       }, {} as Record<string, SiteSettingData>);
 
+      // Add default testimonials setting if it doesn't exist
+      if (!settingsMap['testimonials_enabled']) {
+        settingsMap['testimonials_enabled'] = {
+          id: 'testimonials_enabled',
+          setting_key: 'testimonials_enabled',
+          setting_value: 'false',
+          setting_type: 'boolean',
+          description: 'Show testimonials section on homepage'
+        };
+      }
+
       setSettings(settingsMap);
       // Cache for public pages fallback and instant reflection
       const compact: Record<string, string> = {};
@@ -83,9 +94,10 @@ const SiteSettingsManager: React.FC = () => {
     // Optimistic local update so controls feel responsive
     const prev = settings[key];
     const exists = !!prev;
+    const settingType = prev?.setting_type || (key === 'testimonials_enabled' ? 'boolean' : 'text');
     const nextRow = exists
       ? { ...prev, setting_value: value }
-      : { id: key as any, setting_key: key, setting_value: value, setting_type: 'text' as const, description: key.replace(/_/g, ' ') } as any;
+      : { id: key as any, setting_key: key, setting_value: value, setting_type: settingType as const, description: key.replace(/_/g, ' ') } as any;
     setSettings(prevMap => ({ ...prevMap, [key]: nextRow }));
 
     try {
@@ -94,8 +106,8 @@ const SiteSettingsManager: React.FC = () => {
         .upsert({
           setting_key: key,
           setting_value: value,
-          setting_type: 'text',
-          description: key.replace(/_/g, ' '),
+          setting_type: settingType,
+          description: key === 'testimonials_enabled' ? 'Show testimonials section on homepage' : key.replace(/_/g, ' '),
         }, { onConflict: 'setting_key' });
       if (error) throw error;
       // Update cache and broadcast change
@@ -364,7 +376,7 @@ const SiteSettingsManager: React.FC = () => {
   const companySettings = ['company_name', 'company_tagline', 'logo_url'];
   const contactSettings = ['primary_email', 'primary_phone', 'address'];
   const socialSettings = ['facebook_url', 'linkedin_url', 'twitter_url', 'youtube_url'];
-  const generalSettings = ['cta_button_text', 'enable_floating_cta'];
+  const generalSettings = ['cta_button_text', 'enable_floating_cta', 'testimonials_enabled'];
   const seoSettings = ['meta_description', 'meta_keywords', 'google_analytics_id'];
 
   return (
