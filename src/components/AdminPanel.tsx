@@ -370,28 +370,28 @@ const AdminPanel = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-background p-4 sm:p-6">
       <div className="container mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
           <div className="flex items-center gap-3">
             {logoUrl && (
-              <img src={logoUrl} alt="Logo" className="h-8 w-auto rounded" />
+              <img src={logoUrl} alt="Logo" className="h-6 sm:h-8 w-auto rounded" />
             )}
-            <h1 className="text-3xl font-bold">Admin Panel</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold">Admin Panel</h1>
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Button variant="outline" onClick={handleLogout}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
+            <Button variant="outline" onClick={handleLogout} size="sm">
+              <LogOut className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Logout</span>
             </Button>
           </div>
         </div>
 
         {/* Tabs */}
         <Tabs defaultValue="submissions" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-8">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 lg:grid-cols-8">
             <TabsTrigger value="submissions" className="flex items-center">
               <Mail className="h-4 w-4 mr-2" />
               Contacts
@@ -466,9 +466,9 @@ const AdminPanel = () => {
             {/* Filters & Actions */}
             <Card>
               <CardContent className="p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full">
                   <select
-                    className="px-2 py-1 border rounded"
+                    className="px-2 py-1 border rounded w-full sm:w-auto"
                     value={statusFilter}
                     onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
                   >
@@ -482,11 +482,13 @@ const AdminPanel = () => {
                     placeholder="Search name, email, company, service"
                     value={searchTerm}
                     onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
-                    className="w-64"
+                    className="w-full sm:w-64"
                   />
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" onClick={exportSubmissionsCsv}>Export CSV</Button>
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <Button variant="outline" onClick={exportSubmissionsCsv} className="w-full sm:w-auto">
+                    Export CSV
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -497,7 +499,8 @@ const AdminPanel = () => {
                 <CardTitle>Contact Submissions ({filteredSubmissions.length})</CardTitle>
               </CardHeader>
               <CardContent>
-                <Table>
+                <div className="overflow-x-auto">
+                  <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Name</TableHead>
@@ -584,19 +587,28 @@ const AdminPanel = () => {
                       </TableRow>
                     ))}
                   </TableBody>
-                </Table>
+                  </Table>
+                </div>
                 {/* Pagination */}
-                <div className="flex items-center justify-end gap-2 mt-4">
-                  <span className="text-sm text-muted-foreground">Page {currentPage} of {totalPages}</span>
-                  <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(1, p-1))} disabled={currentPage <= 1}>Prev</Button>
-                  <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(totalPages, p+1))} disabled={currentPage >= totalPages}>Next</Button>
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-2 mt-4">
+                  <span className="text-sm text-muted-foreground order-2 sm:order-1">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <div className="flex items-center gap-2 order-1 sm:order-2">
+                    <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(1, p-1))} disabled={currentPage <= 1}>
+                      Prev
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(totalPages, p+1))} disabled={currentPage >= totalPages}>
+                      Next
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Contact Submission Details Modal */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+              <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto mx-4">
                 <DialogHeader>
                   <DialogTitle>Contact Submission Details</DialogTitle>
                 </DialogHeader>
@@ -696,10 +708,11 @@ const AdminPanel = () => {
                     </Card>
 
                     {/* Action Buttons */}
-                    <div className="flex justify-end space-x-2">
+                    <div className="flex flex-col sm:flex-row justify-end gap-2 sm:space-x-2">
                       <Button
                         variant="outline"
                         onClick={() => window.open(`mailto:${selectedSubmission.email}?subject=Re: Your Oracle Consulting Inquiry`)}
+                        className="w-full sm:w-auto"
                       >
                         <Mail className="h-4 w-4 mr-2" />
                         Send Email
@@ -708,12 +721,13 @@ const AdminPanel = () => {
                         <Button
                           variant="outline"
                           onClick={() => window.open(`tel:${selectedSubmission.phone}`)}
+                          className="w-full sm:w-auto"
                         >
                           <Phone className="h-4 w-4 mr-2" />
                           Call
                         </Button>
                       )}
-                      <Button onClick={() => setIsDialogOpen(false)}>
+                      <Button onClick={() => setIsDialogOpen(false)} className="w-full sm:w-auto">
                         Close
                       </Button>
                     </div>
