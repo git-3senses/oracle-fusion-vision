@@ -22,17 +22,19 @@ import {
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { 
-  LogOut, 
-  Mail, 
-  Phone, 
-  Building, 
-  Calendar, 
-  MessageSquare, 
-  Image, 
+import {
+  LogOut,
+  Mail,
+  Phone,
+  Building,
+  Calendar,
+  MessageSquare,
+  Image,
   Settings,
   FileText,
-  Globe
+  Globe,
+  Menu,
+  X
 } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
 import HeroBannerAdmin from './HeroBannerAdmin';
@@ -69,6 +71,8 @@ const AdminPanel = () => {
   const [activityLogs, setActivityLogs] = useState<any[]>([]);
   const [selectedSubmission, setSelectedSubmission] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('submissions');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -372,26 +376,92 @@ const AdminPanel = () => {
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
       <div className="container mx-auto">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        {/* Mobile Header */}
+        <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
             {logoUrl && (
               <img src={logoUrl} alt="Logo" className="h-6 sm:h-8 w-auto rounded" />
             )}
-            <h1 className="text-2xl sm:text-3xl font-bold">Admin Panel</h1>
+            <h1 className="text-xl sm:text-3xl font-bold">Admin Panel</h1>
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Button variant="outline" onClick={handleLogout} size="sm">
-              <LogOut className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Logout</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="md:hidden"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+            <Button variant="outline" onClick={handleLogout} size="sm" className="hidden md:flex">
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
             </Button>
           </div>
         </div>
 
+        {/* Mobile Menu Overlay */}
+        {isMobileMenuOpen && (
+          <div className="fixed inset-0 bg-black/50 z-50 md:hidden" onClick={() => setIsMobileMenuOpen(false)}>
+            <div className="fixed right-0 top-0 h-full w-64 bg-background border-l shadow-lg p-4" onClick={(e) => e.stopPropagation()}>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="font-semibold">Navigation</h2>
+                <Button variant="ghost" size="sm" onClick={() => setIsMobileMenuOpen(false)}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {[
+                  { id: 'submissions', label: 'Contacts', icon: Mail },
+                  { id: 'hero-banners', label: 'Hero Banners', icon: Image },
+                  { id: 'content', label: 'Page Content', icon: FileText },
+                  { id: 'footer', label: 'Footer', icon: Globe },
+                  { id: 'jobs', label: 'Job Openings', icon: Building },
+                  { id: 'testimonials', label: 'Testimonials', icon: Image },
+                  { id: 'settings', label: 'Site Settings', icon: Settings },
+                  { id: 'audit', label: 'Audit Logs', icon: Globe }
+                ].map((tab) => (
+                  <Button
+                    key={tab.id}
+                    variant={activeTab === tab.id ? "default" : "ghost"}
+                    className="w-full justify-start"
+                    onClick={() => {
+                      setActiveTab(tab.id);
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <tab.icon className="h-4 w-4 mr-2" />
+                    {tab.label}
+                  </Button>
+                ))}
+                <hr className="my-4" />
+                <Button variant="outline" onClick={handleLogout} className="w-full justify-start">
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Mobile Page Title */}
+        <div className="md:hidden mb-4">
+          <h2 className="text-lg font-semibold capitalize">
+            {activeTab === 'submissions' && 'Contact Submissions'}
+            {activeTab === 'hero-banners' && 'Hero Banners'}
+            {activeTab === 'content' && 'Page Content'}
+            {activeTab === 'footer' && 'Footer Management'}
+            {activeTab === 'jobs' && 'Job Openings'}
+            {activeTab === 'testimonials' && 'Testimonials'}
+            {activeTab === 'settings' && 'Site Settings'}
+            {activeTab === 'audit' && 'Audit Logs'}
+          </h2>
+        </div>
+
         {/* Tabs */}
-        <Tabs defaultValue="submissions" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 lg:grid-cols-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="hidden md:grid w-full grid-cols-4 lg:grid-cols-8">
             <TabsTrigger value="submissions" className="flex items-center">
               <Mail className="h-4 w-4 mr-2" />
               Contacts
@@ -499,7 +569,85 @@ const AdminPanel = () => {
                 <CardTitle>Contact Submissions ({filteredSubmissions.length})</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="overflow-x-auto">
+                {/* Mobile Card View */}
+                <div className="md:hidden space-y-4">
+                  {pagedSubmissions.map((submission) => (
+                    <Card key={submission.id} className="p-4">
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="font-medium text-base">{submission.name}</h3>
+                            {submission.consultation_requested && (
+                              <Badge variant="secondary" className="text-xs mt-1">
+                                Consultation Requested
+                              </Badge>
+                            )}
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedSubmission(submission);
+                              setIsDialogOpen(true);
+                            }}
+                          >
+                            <MessageSquare className="h-4 w-4" />
+                          </Button>
+                        </div>
+
+                        <div className="space-y-2 text-sm">
+                          <div className="flex items-center">
+                            <Mail className="h-3 w-3 mr-2 text-muted-foreground" />
+                            <a href={`mailto:${submission.email}`} className="text-primary hover:underline">
+                              {submission.email}
+                            </a>
+                          </div>
+                          {submission.phone && (
+                            <div className="flex items-center">
+                              <Phone className="h-3 w-3 mr-2 text-muted-foreground" />
+                              <a href={`tel:${submission.phone}`} className="text-primary hover:underline">
+                                {submission.phone}
+                              </a>
+                            </div>
+                          )}
+                          {submission.company && (
+                            <div className="flex items-center">
+                              <Building className="h-3 w-3 mr-2 text-muted-foreground" />
+                              <span>{submission.company}</span>
+                            </div>
+                          )}
+                          <div className="flex items-center">
+                            <Calendar className="h-3 w-3 mr-2 text-muted-foreground" />
+                            <span>{new Date(submission.created_at).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between items-center pt-2 border-t">
+                          <div className="flex items-center gap-2">
+                            {submission.service_interest && (
+                              <Badge variant="outline" className="text-xs">
+                                {submission.service_interest}
+                              </Badge>
+                            )}
+                          </div>
+                          <select
+                            value={submission.status}
+                            onChange={(e) => updateStatus(submission.id, e.target.value)}
+                            className="px-2 py-1 rounded text-xs border"
+                          >
+                            <option value="new">New</option>
+                            <option value="contacted">Contacted</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="closed">Closed</option>
+                          </select>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-x-auto">
                   <Table>
                   <TableHeader>
                     <TableRow>
