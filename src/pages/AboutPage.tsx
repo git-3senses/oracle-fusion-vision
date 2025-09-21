@@ -10,7 +10,7 @@ const AboutPage = () => {
     <div className="min-h-screen bg-background">
       <SEOHead
         title="About Vijay Apps Consultants - Oracle Transformation Experts"
-        description="15+ years of Oracle expertise helping 500+ global organizations achieve digital transformation. Meet our certified Oracle consultants and learn about our proven methodology."
+        description="20+ years of Oracle expertise with 10+ certified experts delivering transformation projects. Meet our Oracle consultants and learn about our proven methodology."
         keywords="Oracle Consultants, Oracle Experts, Oracle Team, Oracle Implementation Experience, Oracle Certified, Oracle Specialists"
         canonicalUrl={typeof window !== 'undefined' ? `${window.location.origin}/about` : ''}
       />
@@ -19,7 +19,7 @@ const AboutPage = () => {
         <HeroBanner
           pageName="about"
           defaultTitle="About Vijay Apps Consultants"
-          defaultSubtitle="Your trusted Oracle transformation partner with 15+ years of expertise helping global organizations achieve digital transformation."
+          defaultSubtitle="Your trusted Oracle transformation partner with 20+ years of expertise and 10+ certified experts helping global organizations achieve digital transformation."
           defaultCtaText="Learn More"
           defaultCtaLink="#about"
         />

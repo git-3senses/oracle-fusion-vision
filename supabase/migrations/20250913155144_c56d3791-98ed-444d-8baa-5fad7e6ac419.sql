@@ -126,7 +126,7 @@ INSERT INTO public.footer_content (section_type, title, content, order_index) VA
 
 -- Insert sample page content for existing pages
 INSERT INTO public.page_content (page_name, section_name, title, subtitle, content, order_index) VALUES
-('about', 'hero', 'About Vijay Apps Consultants', 'Your trusted Oracle transformation partner with 15+ years of expertise helping global organizations achieve digital transformation.', '', 1),
+('about', 'hero', 'About Vijay Apps Consultants', 'Your trusted Oracle transformation partner with 20+ years of expertise and 10+ certified experts helping global organizations achieve digital transformation.', '', 1),
 ('about', 'mission', 'Our Mission', 'Transforming Business Through Technology', 'We empower organizations to achieve operational excellence through innovative Oracle solutions and strategic consulting services.', 1),
 ('about', 'values', 'Our Values', 'Excellence, Innovation, Partnership', 'We believe in delivering exceptional value through cutting-edge technology, deep expertise, and long-term partnerships.', 1),
 ('services', 'hero', 'Comprehensive Oracle Solutions', 'From implementation to optimization, we provide end-to-end Oracle consulting services that transform your business operations.', '', 1),

@@ -14,7 +14,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <SEOHead
         title="Vijay Apps Consultants - Oracle E-Business Suite & Fusion Specialists"
-        description="Transform your enterprise with Oracle excellence. Leading consulting firm delivering ERP implementations, AI-enhanced solutions, and digital transformation for 500+ global clients."
+        description="Transform your enterprise with Oracle excellence. Leading consulting firm with 20+ years experience and 10+ certified experts delivering ERP implementations and digital transformation."
         keywords="Oracle ERP, Oracle Fusion, E-Business Suite, Oracle Consulting, Enterprise Implementation, Business Transformation, Oracle Support, Cloud Migration"
         canonicalUrl={typeof window !== 'undefined' ? window.location.origin : ''}
       />

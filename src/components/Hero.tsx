@@ -82,15 +82,15 @@ const Hero = () => {
               <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-3 shadow-lg backdrop-blur-sm border border-white/20">
                 <Users className="h-6 w-6" />
               </div>
-              <div className="text-2xl font-bold">500+</div>
-              <div className="text-sm text-white/80">Global Clients</div>
+              <div className="text-2xl font-bold">10+</div>
+              <div className="text-sm text-white/80">Certified Experts</div>
             </div>
             
             <div className="text-center">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-3 shadow-lg backdrop-blur-sm border border-white/20">
                 <Award className="h-6 w-6" />
               </div>
-              <div className="text-2xl font-bold">15+</div>
+              <div className="text-2xl font-bold">20+</div>
               <div className="text-sm text-white/80">Years Experience</div>
             </div>
             
@@ -98,7 +98,7 @@ const Hero = () => {
               <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-3 shadow-lg backdrop-blur-sm border border-white/20">
                 <Globe className="h-6 w-6" />
               </div>
-              <div className="text-2xl font-bold">50+</div>
+              <div className="text-2xl font-bold">5</div>
               <div className="text-sm text-white/80">Countries Served</div>
             </div>
             

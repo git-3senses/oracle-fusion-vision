@@ -55,7 +55,7 @@ USING (bucket_id = 'hero-media' AND auth.uid() IS NOT NULL);
 -- Insert default hero banner data
 INSERT INTO public.hero_banners (page_name, title, subtitle, media_type, cta_text, cta_link) VALUES
 ('home', 'Transform Your Enterprise with Oracle Excellence', 'Leading Oracle E-Business Suite & Fusion consulting firm delivering enterprise-grade solutions, AI-enhanced implementations, and strategic business transformation for global organizations.', 'image', 'Start Your Transformation', '#contact'),
-('about', 'About Vijay Apps Consultants', 'Your trusted Oracle transformation partner with 15+ years of expertise helping global organizations achieve digital transformation.', 'image', 'Learn More', '#services'),
+('about', 'About Vijay Apps Consultants', 'Your trusted Oracle transformation partner with 20+ years of expertise and 10+ certified experts helping global organizations achieve digital transformation.', 'image', 'Learn More', '#services'),
 ('services', 'Comprehensive Oracle Solutions', 'From implementation to optimization, we provide end-to-end Oracle consulting services that transform your business operations.', 'image', 'Explore Services', '#contact'),
 ('careers', 'Join Our Team', 'Be part of a dynamic team shaping the future of Oracle consulting and enterprise solutions.', 'image', 'View Positions', '#contact'),
 ('contact', 'Get In Touch', 'Ready to transform your business? Let''s discuss how our Oracle expertise can drive your digital transformation.', 'image', 'Contact Us', '#contact-form');

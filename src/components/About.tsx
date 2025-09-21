@@ -28,10 +28,10 @@ const About = () => {
   const aboutRef = useRef<HTMLDivElement>(null);
 
   const finalCounts = {
-    experience: 15,
-    clients: 500,
-    projects: 1200,
-    countries: 50
+    experience: 20,
+    clients: 10,
+    projects: 20,
+    countries: 5
   };
 
   useEffect(() => {
@@ -193,7 +193,7 @@ const About = () => {
         <div id="about-stats" className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
           {[
             { key: 'experience', label: 'Years Experience', icon: Target, suffix: '+' },
-            { key: 'clients', label: 'Happy Clients', icon: Users, suffix: '+' },
+            { key: 'clients', label: 'Certified Experts', icon: Users, suffix: '+' },
             { key: 'projects', label: 'Projects Delivered', icon: Cog, suffix: '+' },
             { key: 'countries', label: 'Countries Served', icon: Globe, suffix: '+' }
           ].map((item, index) => (
