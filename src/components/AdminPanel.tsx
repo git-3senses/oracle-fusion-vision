@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
+import {
   Table,
   TableBody,
   TableCell,
@@ -13,6 +13,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -60,6 +67,8 @@ const AdminPanel = () => {
   const [page, setPage] = useState<number>(1);
   const [pageSize,] = useState<number>(10);
   const [activityLogs, setActivityLogs] = useState<any[]>([]);
+  const [selectedSubmission, setSelectedSubmission] = useState<any>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -565,11 +574,8 @@ const AdminPanel = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() => {
-                              // Show message details
-                              toast({
-                                title: "Message",
-                                description: submission.message,
-                              });
+                              setSelectedSubmission(submission);
+                              setIsDialogOpen(true);
                             }}
                           >
                             <MessageSquare className="h-4 w-4" />
@@ -587,6 +593,134 @@ const AdminPanel = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Contact Submission Details Modal */}
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Contact Submission Details</DialogTitle>
+                </DialogHeader>
+                {selectedSubmission && (
+                  <div className="space-y-6">
+                    {/* Contact Information */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="text-sm">Contact Information</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                          <div className="flex items-center">
+                            <Badge variant="outline" className="mr-2">Name</Badge>
+                            <span className="font-medium">{selectedSubmission.name}</span>
+                          </div>
+                          <div className="flex items-center">
+                            <Mail className="h-4 w-4 mr-2 text-muted-foreground" />
+                            <a href={`mailto:${selectedSubmission.email}`} className="text-primary hover:underline">
+                              {selectedSubmission.email}
+                            </a>
+                          </div>
+                          {selectedSubmission.phone && (
+                            <div className="flex items-center">
+                              <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
+                              <a href={`tel:${selectedSubmission.phone}`} className="text-primary hover:underline">
+                                {selectedSubmission.phone}
+                              </a>
+                            </div>
+                          )}
+                          {selectedSubmission.company && (
+                            <div className="flex items-center">
+                              <Building className="h-4 w-4 mr-2 text-muted-foreground" />
+                              <span>{selectedSubmission.company}</span>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="text-sm">Submission Details</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                          <div className="flex items-center">
+                            <Badge variant="outline" className="mr-2">Status</Badge>
+                            <select
+                              value={selectedSubmission.status}
+                              onChange={(e) => {
+                                updateStatus(selectedSubmission.id, e.target.value);
+                                setSelectedSubmission({...selectedSubmission, status: e.target.value});
+                              }}
+                              className="px-2 py-1 rounded border"
+                            >
+                              <option value="new">New</option>
+                              <option value="contacted">Contacted</option>
+                              <option value="in_progress">In Progress</option>
+                              <option value="closed">Closed</option>
+                            </select>
+                          </div>
+                          {selectedSubmission.service_interest && (
+                            <div className="flex items-center">
+                              <Badge variant="outline" className="mr-2">Service</Badge>
+                              <Badge variant="secondary">{selectedSubmission.service_interest}</Badge>
+                            </div>
+                          )}
+                          <div className="flex items-center">
+                            <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
+                            <span className="text-sm">
+                              {new Date(selectedSubmission.created_at).toLocaleDateString()} at {new Date(selectedSubmission.created_at).toLocaleTimeString()}
+                            </span>
+                          </div>
+                          {selectedSubmission.consultation_requested && (
+                            <div className="flex items-center">
+                              <Badge variant="secondary" className="text-xs">
+                                Consultation Requested
+                              </Badge>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </div>
+
+                    {/* Message */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-sm flex items-center">
+                          <MessageSquare className="h-4 w-4 mr-2" />
+                          Message
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="bg-muted p-4 rounded-lg">
+                          <p className="whitespace-pre-wrap">{selectedSubmission.message}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Action Buttons */}
+                    <div className="flex justify-end space-x-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => window.open(`mailto:${selectedSubmission.email}?subject=Re: Your Oracle Consulting Inquiry`)}
+                      >
+                        <Mail className="h-4 w-4 mr-2" />
+                        Send Email
+                      </Button>
+                      {selectedSubmission.phone && (
+                        <Button
+                          variant="outline"
+                          onClick={() => window.open(`tel:${selectedSubmission.phone}`)}
+                        >
+                          <Phone className="h-4 w-4 mr-2" />
+                          Call
+                        </Button>
+                      )}
+                      <Button onClick={() => setIsDialogOpen(false)}>
+                        Close
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
           </TabsContent>
 
           <TabsContent value="hero-banners">
