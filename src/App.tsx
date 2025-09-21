@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import Analytics from "@/components/Analytics";
+import RequireAuth from "@/components/RequireAuth";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { lazy, Suspense } from "react";
@@ -53,7 +54,16 @@ const router = createBrowserRouter([
       { path: "/careers", element: <SuspenseWrapper><CareersPage /></SuspenseWrapper> },
       { path: "/contact", element: <SuspenseWrapper><ContactPage /></SuspenseWrapper> },
       { path: "/auth", element: <SuspenseWrapper><AuthPage /></SuspenseWrapper> },
-      { path: "/vac_admin", element: <SuspenseWrapper><AdminPanel /></SuspenseWrapper> },
+      { 
+        path: "/vac_admin", 
+        element: (
+          <SuspenseWrapper>
+            <RequireAuth>
+              <AdminPanel />
+            </RequireAuth>
+          </SuspenseWrapper>
+        )
+      },
       { path: "/privacy", element: <SuspenseWrapper><PrivacyPage /></SuspenseWrapper> },
       { path: "/terms", element: <SuspenseWrapper><TermsPage /></SuspenseWrapper> },
       { path: "/case-studies", element: <SuspenseWrapper><CaseStudiesPage /></SuspenseWrapper> },

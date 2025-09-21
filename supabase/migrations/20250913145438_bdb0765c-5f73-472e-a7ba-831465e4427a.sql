@@ -17,5 +17,5 @@ ON public.admin_users
 FOR SELECT 
 USING (auth.uid()::text IN (SELECT auth.uid()::text));
 
--- Insert a default admin user (user will need to sign up with this email)
-INSERT INTO public.admin_users (email) VALUES ('admin@vijayapps.com');
+-- No default admin users - must be added manually via Supabase dashboard
+-- INSERT INTO public.admin_users (email) VALUES ('your-admin-email@company.com');
