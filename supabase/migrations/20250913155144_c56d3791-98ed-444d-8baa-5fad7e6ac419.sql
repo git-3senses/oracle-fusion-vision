@@ -122,7 +122,7 @@ INSERT INTO public.footer_content (section_type, title, content, order_index) VA
 ('legal', 'Privacy Policy', '#', 1),
 ('legal', 'Terms of Service', '#', 2),
 ('legal', 'Copyright', '© 2025 Vijay Apps Consultants. All rights reserved.', 3),
-('legal', 'Certifications', 'Oracle Certified Gold Partner | ISO 27001 Certified', 4);
+('legal', 'Certifications', 'Oracle Certified Experts | ISO 27001 Certified', 4);
 
 -- Insert sample page content for existing pages
 INSERT INTO public.page_content (page_name, section_name, title, subtitle, content, order_index) VALUES
