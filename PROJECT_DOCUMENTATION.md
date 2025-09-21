@@ -362,7 +362,14 @@ const router = createBrowserRouter([
       { path: "/submit-resume", element: <SubmitResumePage /> },
       { path: "/privacy", element: <PrivacyPage /> },
       { path: "/terms", element: <TermsPage /> },
-      { path: "/vac_admin", element: <AdminPanel /> },
+      {
+        path: "/vac_admin",
+        element: (
+          <RequireAuth>
+            <AdminPanel />
+          </RequireAuth>
+        )
+      },
       { path: "*", element: <NotFound /> }
     ]
   }
@@ -416,6 +423,13 @@ npm run lint         # Code quality checks
 - **Supabase Auth**: Secure user authentication
 - **Row Level Security**: Database-level access control
 - **Admin Verification**: Email-based admin validation
+- **Admin Provisioning**: Accounts issued manually via Supabase invites; public signup disabled
+
+#### Provisioning Checklist
+1. **Disable Public Sign-Up**: In Supabase dashboard, Authentication → Providers → Email, disable “Allow new users to sign up.”
+2. **Invite Admins**: Use Supabase Auth → Users → Invite user, or insert the account via SQL migration with the `admin` role metadata.
+3. **Confirm Policies**: Ensure RLS policies grant read/write access only to authenticated admins (typically checking `auth.uid()` and `app_metadata.role`).
+4. **Credential Rotation**: Remove Supabase accounts immediately if an admin leaves the organization.
 
 ### Data Protection
 - **Input Validation**: Zod schema validation
