@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Home, ArrowLeft, Search, Mail } from "lucide-react";
+import { Home, ArrowLeft } from "lucide-react";
 import Header from "@/components/Header";
 import DynamicFooter from "@/components/DynamicFooter";
 import SEOHead from "@/components/SEOHead";
@@ -80,39 +80,6 @@ const NotFound = () => {
             </Button>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-6 max-w-lg mx-auto">
-            <div className="text-center p-6 bg-card rounded-lg border border-border">
-              <Search className="h-8 w-8 text-primary mx-auto mb-3" />
-              <h3 className="font-semibold mb-2">Explore Our Services</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Discover our Oracle consulting solutions
-              </p>
-              <Button
-                onClick={() => navigate("/services")}
-                variant="outline"
-                size="sm"
-                className="w-full"
-              >
-                View Services
-              </Button>
-            </div>
-
-            <div className="text-center p-6 bg-card rounded-lg border border-border">
-              <Mail className="h-8 w-8 text-primary mx-auto mb-3" />
-              <h3 className="font-semibold mb-2">Get In Touch</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Contact our Oracle experts for help
-              </p>
-              <Button
-                onClick={() => navigate("/contact")}
-                variant="outline"
-                size="sm"
-                className="w-full"
-              >
-                Contact Us
-              </Button>
-            </div>
-          </div>
         </div>
       </main>
       <DynamicFooter />
